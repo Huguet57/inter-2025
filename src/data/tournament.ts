@@ -26,7 +26,7 @@ export interface Match {
 export const groups: Team[][] = [
   [
     { name: "Trempats 1", group: 1, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
-    { name: "Llunatics 2", group: 1, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
+    { name: "Llunàtics 2", group: 1, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     { name: "Grillats", group: 1, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     { name: "Maracos 1", group: 1, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
   ],
@@ -58,7 +58,7 @@ export const groups: Team[][] = [
     { name: "Marrantics", group: 6, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     { name: "Engrescats 1", group: 6, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
     { name: "Pataquers 2", group: 6, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
-    { name: "Llunatics 1", group: 6, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
+    { name: "Llunàtics 1", group: 6, played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 },
   ],
 ];
 
@@ -81,7 +81,7 @@ export const groupMatches: Match[] = [
   { id: "G16", time: "12:00-12:20", field: 2, team1: "Bergants 2", team2: "Xoriguers", score1: 0, score2: 0 },
   { id: "G17", time: "12:20-12:40", field: 1, team1: "Marrantics", team2: "Pataquers 2", score1: 4, score2: 1 },
   { id: "G18", time: "12:20-12:40", field: 2, team1: "Penjats 1", team2: "Bergants 1", score1: 2, score2: 2 },
-  { id: "G19", time: "12:40-13:00", field: 1, team1: "Llunatics 2", team2: "Marracos 1", score1: 1, score2: 3 },
+  { id: "G19", time: "12:40-13:00", field: 1, team1: "Llunàtics 2", team2: "Marracos 1", score1: 1, score2: 3 },
   { id: "G20", time: "12:40-13:00", field: 2, team1: "Ganapies 1", team2: "Pataquers 1", score1: 0, score2: 1 },
   { id: "G21", time: "13:00-13:20", field: 1, team1: "Trempats 2", team2: "Arreplegats 2", score1: 2, score2: 0 },
   { id: "G22", time: "13:00-13:20", field: 2, team1: "Marracos 2", team2: "Descargolats", score1: 3, score2: 1 },
@@ -93,7 +93,7 @@ export const groupMatches: Match[] = [
   { id: "G28", time: "14:40-15:00", field: 2, team1: "Passerells", team2: "Descargolats", score1: 0, score2: 2 },
   { id: "G29", time: "15:00-15:20", field: 1, team1: "Penjats 1", team2: "Ganapies 2", score1: 3, score2: 0 },
   { id: "G30", time: "15:00-15:20", field: 2, team1: "Marrantics", team2: "Llunàtics 1", score1: 1, score2: 2 },
-  { id: "G31", time: "15:20-15:40", field: 1, team1: "Llunatics 2", team2: "Grillats", score1: 2, score2: 1 },
+  { id: "G31", time: "15:20-15:40", field: 1, team1: "Llunàtics 2", team2: "Grillats", score1: 2, score2: 1 },
   { id: "G32", time: "15:20-15:40", field: 2, team1: "Ganapies 1", team2: "Emboirats", score1: 1, score2: 0 },
   { id: "G33", time: "15:40-16:00", field: 1, team1: "Trempats 2", team2: "Xoriguers", score1: 0, score2: 3 },
   { id: "G34", time: "15:40-16:00", field: 2, team1: "Marracos 2", team2: "Engrescats 2", score1: 2, score2: 1 },

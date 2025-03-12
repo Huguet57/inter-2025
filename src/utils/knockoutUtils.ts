@@ -5,62 +5,123 @@ export interface QualifiedTeam {
   name: string;
   group: number;
   position: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  points: number;
 }
+
+// Funció auxiliar per normalitzar noms d'equips (eliminar accents)
+const normalizeTeamName = (name: string): string => {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Elimina accents
+    .trim(); // Elimina espais extra
+};
 
 // Calculate group standings
 export const calculateGroupStandings = (teams: Team[][], matches: Match[]): QualifiedTeam[] => {
-  // Create a deep copy of teams
-  const updatedTeams = teams.map(group => group.map(team => ({ ...team })));
+  console.log('Calculant classificacions amb', teams.length, 'grups i', matches.length, 'partits');
   
-  // Process each match to update team stats
+  // Create a deep copy of teams to no modificar els originals
+  const updatedTeams = teams.map(group => 
+    group.map(team => ({ 
+      ...team, 
+      played: 0, won: 0, drawn: 0, lost: 0, 
+      goalsFor: 0, goalsAgainst: 0, points: 0 
+    }))
+  );
+  
+  // Crear un mapa d'equips normalitzats per cerca més ràpida i robusta
+  const teamMap: Map<string, {team: Team, groupIndex: number}> = new Map();
+  updatedTeams.forEach((group, groupIndex) => {
+    group.forEach(team => {
+      // Guardem tant el nom original com el normalitzat
+      teamMap.set(normalizeTeamName(team.name), {team, groupIndex});
+      
+      // També guardem versions alternatives comunes (amb i sense accents)
+      if (team.name.includes('à')) {
+        teamMap.set(normalizeTeamName(team.name.replace('à', 'a')), {team, groupIndex});
+      }
+      if (team.name.includes('a') && !team.name.includes('à')) {
+        teamMap.set(normalizeTeamName(team.name.replace('a', 'à')), {team, groupIndex});
+      }
+    });
+  });
+  
+  console.log('Equips registrats:', Array.from(teamMap.keys()));
+  
+  // Processar cada partit per actualitzar estadístiques
   matches.forEach(match => {
     if (match.score1 !== undefined && match.score2 !== undefined) {
-      // Find teams in our groups
-      updatedTeams.forEach(group => {
-        group.forEach(team => {
-          if (team.name === match.team1) {
-            // Update team1 stats
-            team.played++;
-            team.goalsFor += match.score1;
-            team.goalsAgainst += match.score2;
-            
-            if (match.score1 > match.score2) {
-              team.won++;
-              team.points += 3;
-            } else if (match.score1 === match.score2) {
-              team.drawn++;
-              team.points += 1;
-            } else {
-              team.lost++;
-            }
-          }
-          
-          if (team.name === match.team2) {
-            // Update team2 stats
-            team.played++;
-            team.goalsFor += match.score2;
-            team.goalsAgainst += match.score1;
-            
-            if (match.score2 > match.score1) {
-              team.won++;
-              team.points += 3;
-            } else if (match.score1 === match.score2) {
-              team.drawn++;
-              team.points += 1;
-            } else {
-              team.lost++;
-            }
-          }
-        });
-      });
+      const normalizedTeam1 = normalizeTeamName(match.team1);
+      const normalizedTeam2 = normalizeTeamName(match.team2);
+      
+      console.log(`Processant partit: ${match.team1} (${normalizedTeam1}) vs ${match.team2} (${normalizedTeam2}) - ${match.score1}:${match.score2}`);
+      
+      const team1Entry = teamMap.get(normalizedTeam1);
+      const team2Entry = teamMap.get(normalizedTeam2);
+      
+      if (!team1Entry) {
+        console.warn(`Equip no trobat: ${match.team1} (${normalizedTeam1})`);
+      }
+      
+      if (!team2Entry) {
+        console.warn(`Equip no trobat: ${match.team2} (${normalizedTeam2})`);
+      }
+      
+      if (team1Entry) {
+        // Actualitzar estadístiques equip 1
+        team1Entry.team.played++;
+        team1Entry.team.goalsFor += match.score1;
+        team1Entry.team.goalsAgainst += match.score2;
+        
+        if (match.score1 > match.score2) {
+          team1Entry.team.won++;
+          team1Entry.team.points += 3;
+        } else if (match.score1 === match.score2) {
+          team1Entry.team.drawn++;
+          team1Entry.team.points += 1;
+        } else {
+          team1Entry.team.lost++;
+        }
+      }
+      
+      if (team2Entry) {
+        // Actualitzar estadístiques equip 2
+        team2Entry.team.played++;
+        team2Entry.team.goalsFor += match.score2;
+        team2Entry.team.goalsAgainst += match.score1;
+        
+        if (match.score2 > match.score1) {
+          team2Entry.team.won++;
+          team2Entry.team.points += 3;
+        } else if (match.score1 === match.score2) {
+          team2Entry.team.drawn++;
+          team2Entry.team.points += 1;
+        } else {
+          team2Entry.team.lost++;
+        }
+      }
     }
   });
+  
+  // Per propòsits de debugging, revisem els equips actualitzats
+  updatedTeams.forEach((group, index) => {
+    console.log(`Grup ${index + 1}:`);
+    group.forEach(team => {
+      console.log(`  ${team.name}: ${team.points}pts (${team.played}j, ${team.won}g, ${team.drawn}e, ${team.lost}p, ${team.goalsFor}:${team.goalsAgainst})`);
+    });
+  });
 
-  // Sort each group and collect qualified teams
+  // Ordenar cada grup i recollir els equips classificats
   const qualifiedTeams: QualifiedTeam[] = [];
   
   updatedTeams.forEach((group, groupIndex) => {
-    // Sort by points, goal difference, then goals scored
+    // Ordenar per punts, diferència de gols, i després gols a favor
     const sortedGroup = [...group].sort((a, b) => {
       if (b.points !== a.points) return b.points - a.points;
       const goalDiffA = a.goalsFor - a.goalsAgainst;
@@ -69,16 +130,24 @@ export const calculateGroupStandings = (teams: Team[][], matches: Match[]): Qual
       return b.goalsFor - a.goalsFor;
     });
     
-    // Add each team with its position in the group
+    // Afegir cada equip amb la seva posició al grup i les seves estadístiques actualitzades
     sortedGroup.forEach((team, position) => {
       qualifiedTeams.push({
         name: team.name,
         group: groupIndex + 1,
-        position: position + 1
+        position: position + 1,
+        played: team.played,
+        won: team.won,
+        drawn: team.drawn,
+        lost: team.lost,
+        goalsFor: team.goalsFor,
+        goalsAgainst: team.goalsAgainst,
+        points: team.points
       });
     });
   });
   
+  console.log('Resultats de la classificació:', qualifiedTeams);
   return qualifiedTeams;
 };
 

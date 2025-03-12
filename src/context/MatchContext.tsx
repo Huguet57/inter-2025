@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Match, groupMatches as initialGroupMatches, knockoutMatches as initialKnockoutMatches } from '../data/tournament';
 
 interface MatchContextType {
@@ -17,6 +17,8 @@ interface MatchContextType {
 const MatchContext = createContext<MatchContextType | undefined>(undefined);
 
 export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  console.log('Inicialitzant MatchProvider amb', initialGroupMatches.length, 'partits de grup');
+  
   const [matches, setMatches] = useState<Match[]>(initialGroupMatches);
   const [knockoutMatches, setKnockoutMatches] = useState({
     roundOf16: initialKnockoutMatches.roundOf16.map(m => ({ ...m, team1: '', team2: '' })),
@@ -25,6 +27,11 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     thirdPlace: { ...initialKnockoutMatches.thirdPlace, team1: '', team2: '' },
     final: { ...initialKnockoutMatches.final, team1: '', team2: '' }
   });
+
+  // Imprimir a consola per depuració
+  useEffect(() => {
+    console.log('Partits disponibles al context:', matches.length);
+  }, [matches]);
 
   const updateMatch = (index: number, updates: Partial<Match>) => {
     const newMatches = [...matches];
