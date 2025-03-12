@@ -229,14 +229,6 @@ export const RefereeMatchControl: React.FC = () => {
 
   return (
     <div className="space-y-8 max-w-xl mx-auto">
-      {!groupsCompleted && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-700">
-            Els equips mostrats a les eliminatòries són una estimació basada en la classificació actual dels grups
-          </p>
-        </div>
-      )}
-
       <div>
         <h2 className="text-2xl font-bold mb-4">Fase de Grups</h2>
         <div className="grid gap-4 grid-cols-1">
@@ -253,6 +245,14 @@ export const RefereeMatchControl: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {!groupsCompleted && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="text-yellow-700">
+            Els equips mostrats a les eliminatòries són una estimació basada en la classificació actual dels grups
+          </p>
+        </div>
+      )}
 
       <div>
         <h2 className="text-2xl font-bold mb-4">Vuitens de Final</h2>
