@@ -103,14 +103,14 @@ export const groupMatches: Match[] = [
 
 export const knockoutMatches = {
   roundOf16: [
-    { id: "R16-1", time: "16:20-16:40", field: 1, description: "1r Grup 1- 4t Grup 2", score1: 0, score2: 4 },
-    { id: "R16-2", time: "16:20-16:40", field: 2, description: "2n Grup 3- 3r Grup 4", score1: 3, score2: 0 },
-    { id: "R16-3", time: "16:40-17:00", field: 1, description: "1r Grup 3- 4t Grup 4", score1: 0, score2: 2 },
-    { id: "R16-4", time: "16:40-17:00", field: 2, description: "2n Grup 1- 3r Grup 2", score1: 1, score2: 0 },
-    { id: "R16-5", time: "17:00-17:20", field: 1, description: "3r Grup 1- 2n Grup 2", score1: 1, score2: 0 },
-    { id: "R16-6", time: "17:00-17:20", field: 2, description: "4t Grup 3- 1r Grup 4", score1: 3, score2: 0 },
-    { id: "R16-7", time: "17:20-17:40", field: 1, description: "3r Grup 3- 2n Grup 4", score1: 2, score2: 0 },
-    { id: "R16-8", time: "17:20-17:40", field: 2, description: "4t Grup 1- 1r Grup 2", score1: 0, score2: 3 },
+    { id: "R16-1", time: "16:20-16:40", field: 1, description: "1r Grup 1 - 4t Grup 2", score1: 0, score2: 4 },
+    { id: "R16-2", time: "16:20-16:40", field: 2, description: "2n Grup 3 - 3r Grup 4", score1: 3, score2: 0 },
+    { id: "R16-3", time: "16:40-17:00", field: 1, description: "1r Grup 3 - 4t Grup 4", score1: 0, score2: 2 },
+    { id: "R16-4", time: "16:40-17:00", field: 2, description: "2n Grup 1 - 3r Grup 2", score1: 1, score2: 0 },
+    { id: "R16-5", time: "17:00-17:20", field: 1, description: "3r Grup 1 - 2n Grup 2", score1: 1, score2: 0 },
+    { id: "R16-6", time: "17:00-17:20", field: 2, description: "4t Grup 3 - 1r Grup 4", score1: 3, score2: 0 },
+    { id: "R16-7", time: "17:20-17:40", field: 1, description: "3r Grup 3 - 2n Grup 4", score1: 2, score2: 0 },
+    { id: "R16-8", time: "17:20-17:40", field: 2, description: "4t Grup 1 - 1r Grup 2", score1: 0, score2: 3 },
   ],
   quarterFinals: [
     { id: "QF-1", time: "18:00-18:20", field: 1, description: "Guanyadors encreuaments anteriors", previousMatchIds: ["R16-1", "R16-2"] },

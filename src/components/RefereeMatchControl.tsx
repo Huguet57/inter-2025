@@ -6,128 +6,12 @@ import Clock from 'lucide-react/dist/esm/icons/clock';
 import Plus from 'lucide-react/dist/esm/icons/plus';
 import Minus from 'lucide-react/dist/esm/icons/minus';
 import { useMatches } from '../context/MatchContext';
-import { calculateTeamStats } from './GroupStage';
+import { groups } from '../data/tournament';
+import { calculateGroupStandings, getQualifiedTeamMap, resolveKnockoutMatchTeams } from '../utils/knockoutUtils';
 
-interface QualifiedTeam {
-  name: string;
-  group: number;
-  position: number;
-}
-
-const getQualifiedTeams = (matches: Match[]) => {
-  const calculatedGroups = calculateTeamStats(matches);
-  const qualifiedTeams: QualifiedTeam[] = [];
-
-  calculatedGroups.forEach((group, groupIndex) => {
-    group.forEach((team, position) => {
-      qualifiedTeams.push({
-        name: team.name,
-        group: groupIndex + 1,
-        position: position + 1
-      });
-    });
-  });
-
-  return qualifiedTeams;
-};
-
-const getTeamsForMatch = (description: string, qualifiedTeams: QualifiedTeam[]) => {
-  const parts = description.split('-').map(part => part.trim());
-  if (parts.length !== 2) return null;
-
-  const getTeam = (part: string) => {
-    const position = parseInt(part[0]);
-    const group = parseInt(part.match(/Grup (\d+)/)?.[1] || '0');
-    
-    const team = qualifiedTeams.find(t => t.group === group && t.position === position);
-    return team ? team.name : part;
-  };
-
-  const team1 = getTeam(parts[0]);
-  const team2 = getTeam(parts[1]);
-
-  return `${team1} - ${team2}`;
-};
-
-// Find a match by its ID across all tournaments rounds
-const findMatchById = (
-  matchId: string,
-  allMatches: {
-    groupMatches: Match[],
-    knockoutMatches: {
-      roundOf16: Match[],
-      quarterFinals: Match[],
-      semiFinals: Match[],
-      thirdPlace: Match,
-      final: Match
-    }
-  }
-): Match | undefined => {
-  // Check in group matches
-  const groupMatch = allMatches.groupMatches.find(m => m.id === matchId);
-  if (groupMatch) return groupMatch;
-  
-  // Check in round of 16
-  const r16Match = allMatches.knockoutMatches.roundOf16.find(m => m.id === matchId);
-  if (r16Match) return r16Match;
-  
-  // Check in quarter finals
-  const qfMatch = allMatches.knockoutMatches.quarterFinals.find(m => m.id === matchId);
-  if (qfMatch) return qfMatch;
-  
-  // Check in semi finals
-  const sfMatch = allMatches.knockoutMatches.semiFinals.find(m => m.id === matchId);
-  if (sfMatch) return sfMatch;
-  
-  // Check third place and final
-  if (allMatches.knockoutMatches.thirdPlace.id === matchId) return allMatches.knockoutMatches.thirdPlace;
-  if (allMatches.knockoutMatches.final.id === matchId) return allMatches.knockoutMatches.final;
-  
-  return undefined;
-};
-
-// Get the winner and loser teams of a match
-const getMatchWinnerAndLoser = (
-  match: Match,
-  qualifiedTeams?: QualifiedTeam[]
-): { winner: string, loser: string } | null => {
-  if (match.score1 === undefined || match.score2 === undefined) {
-    return null; // Match hasn't been played yet
-  }
-  
-  let team1 = match.team1;
-  let team2 = match.team2;
-  
-  // If the match doesn't have team1/team2 explicitly set, but has a description,
-  // try to get the team names from the description
-  if ((!team1 || !team2) && match.description && qualifiedTeams) {
-    const teamsFromDescription = getTeamsForMatch(match.description, qualifiedTeams);
-    if (teamsFromDescription) {
-      const parts = teamsFromDescription.split(' - ');
-      if (parts.length === 2) {
-        team1 = parts[0];
-        team2 = parts[1];
-      }
-    }
-  }
-  
-  if (!team1 || !team2) {
-    return null; // Can't determine the teams
-  }
-  
-  if (match.score1 > match.score2) {
-    return { winner: team1, loser: team2 };
-  } else if (match.score2 > match.score1) {
-    return { winner: team2, loser: team1 };
-  }
-  
-  // In case of a draw (this shouldn't happen in knockout matches, but just in case)
-  return null;
-};
-
-// Get team names for a match based on previousMatchIds
-const getTeamNamesFromPreviousMatches = (
-  match: Match, 
+// Helper function to get name of previous match
+const getPreviousMatchDescription = (
+  previousMatchIds: string[] | undefined,
   allMatches: {
     groupMatches: Match[],
     knockoutMatches: {
@@ -138,45 +22,26 @@ const getTeamNamesFromPreviousMatches = (
       final: Match
     }
   },
-  qualifiedTeams: QualifiedTeam[]
+  teamMap: Record<string, string>
 ): string => {
-  if (!match.previousMatchIds || match.previousMatchIds.length === 0) {
-    return match.team1 && match.team2 ? `${match.team1} - ${match.team2}` : match.description || '';
-  }
+  if (!previousMatchIds || previousMatchIds.length === 0) return '';
   
-  // For the third place match, we need the losers of the previous matches
-  const isThirdPlaceMatch = match.id === 'TP-1';
+  const descriptions = previousMatchIds.map(id => {
+    const match = allMatches.knockoutMatches.roundOf16.find(m => m.id === id);
+    if (match) {
+      const teamNames = resolveKnockoutMatchTeams(match, teamMap, allMatches);
+      return `${match.description} (${teamNames})`;
+    }
+    return id;
+  });
   
-  // Find the previous matches and get their winners/losers
-  const team1Match = findMatchById(match.previousMatchIds[0], allMatches);
-  const team2Match = match.previousMatchIds.length > 1 ? findMatchById(match.previousMatchIds[1], allMatches) : undefined;
-  
-  if (!team1Match) {
-    return match.description || '';
-  }
-  
-  const team1Result = getMatchWinnerAndLoser(team1Match, qualifiedTeams);
-  const team2Result = team2Match ? getMatchWinnerAndLoser(team2Match, qualifiedTeams) : null;
-  
-  if (!team1Result) {
-    return match.description || ''; // First match is a draw or hasn't been played
-  }
-  
-  if (team2Match && !team2Result) {
-    return match.description || ''; // Second match is a draw or hasn't been played
-  }
-  
-  // For third place match, use losers instead of winners
-  const team1 = isThirdPlaceMatch ? team1Result.loser : team1Result.winner;
-  const team2 = team2Result ? (isThirdPlaceMatch ? team2Result.loser : team2Result.winner) : '';
-  
-  return team2 ? `${team1} - ${team2}` : team1;
+  return descriptions.join(' i ');
 };
 
 interface MatchControlProps {
   match: Match;
   onUpdate: (updates: Partial<Match>) => void;
-  qualifiedTeams?: QualifiedTeam[];
+  teamMap?: Record<string, string>;
   allMatches?: {
     groupMatches: Match[],
     knockoutMatches: {
@@ -189,7 +54,7 @@ interface MatchControlProps {
   };
 }
 
-const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedTeams, allMatches }) => {
+const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, teamMap = {}, allMatches }) => {
   const getMatchState = (match: Match) => {
     if (match.isPlaying) return 'playing';
     if (match.score1 !== undefined || match.score2 !== undefined) return 'finished';
@@ -225,15 +90,17 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
   // Get teams to display
   let matchTeams = '';
   
-  if (match.previousMatchIds && match.previousMatchIds.length > 0 && allMatches && qualifiedTeams) {
-    matchTeams = getTeamNamesFromPreviousMatches(match, allMatches, qualifiedTeams);
-  } else if (match.description && qualifiedTeams) {
-    matchTeams = getTeamsForMatch(match.description, qualifiedTeams) || '';
-  } else if (match.team1 && match.team2) {
+  if (match.team1 && match.team2) {
     matchTeams = `${match.team1} vs ${match.team2}`;
+  } else if (allMatches && teamMap) {
+    matchTeams = resolveKnockoutMatchTeams(match, teamMap, allMatches) || match.description || 'Per determinar';
   } else {
     matchTeams = match.description || 'Per determinar';
   }
+
+  // Get previous match info if available
+  const previousMatchInfo = match.previousMatchIds && allMatches && teamMap ? 
+    getPreviousMatchDescription(match.previousMatchIds, allMatches, teamMap) : '';
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 space-y-4">
@@ -358,7 +225,8 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
 
 export const RefereeMatchControl: React.FC = () => {
   const { matches, updateMatch, knockoutMatches, updateKnockoutMatch } = useMatches();
-  const qualifiedTeams = getQualifiedTeams(matches);
+  const qualifiedTeams = calculateGroupStandings(groups, matches);
+  const teamMap = getQualifiedTeamMap(qualifiedTeams);
   
   const allMatches = {
     groupMatches: matches,
@@ -396,7 +264,7 @@ export const RefereeMatchControl: React.FC = () => {
               key={index}
               match={match}
               onUpdate={(updates) => updateKnockoutMatch('roundOf16', index, updates)}
-              qualifiedTeams={qualifiedTeams}
+              teamMap={teamMap}
             />
           ))}
         </div>
@@ -410,7 +278,7 @@ export const RefereeMatchControl: React.FC = () => {
               key={index}
               match={match}
               onUpdate={(updates) => updateKnockoutMatch('quarterFinals', index, updates)}
-              qualifiedTeams={qualifiedTeams}
+              teamMap={teamMap}
               allMatches={allMatches}
             />
           ))}
@@ -425,7 +293,7 @@ export const RefereeMatchControl: React.FC = () => {
               key={index}
               match={match}
               onUpdate={(updates) => updateKnockoutMatch('semiFinals', index, updates)}
-              qualifiedTeams={qualifiedTeams}
+              teamMap={teamMap}
               allMatches={allMatches}
             />
           ))}
@@ -438,7 +306,7 @@ export const RefereeMatchControl: React.FC = () => {
           <MatchControl
             match={knockoutMatches.thirdPlace}
             onUpdate={(updates) => updateKnockoutMatch('thirdPlace', 0, updates)}
-            qualifiedTeams={qualifiedTeams}
+            teamMap={teamMap}
             allMatches={allMatches}
           />
         </div>
@@ -448,7 +316,7 @@ export const RefereeMatchControl: React.FC = () => {
           <MatchControl
             match={knockoutMatches.final}
             onUpdate={(updates) => updateKnockoutMatch('final', 0, updates)}
-            qualifiedTeams={qualifiedTeams}
+            teamMap={teamMap}
             allMatches={allMatches}
           />
         </div>
