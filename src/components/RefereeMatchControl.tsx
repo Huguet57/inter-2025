@@ -49,13 +49,147 @@ const getTeamsForMatch = (description: string, qualifiedTeams: QualifiedTeam[]) 
   return `${team1} - ${team2}`;
 };
 
+// Find a match by its ID across all tournaments rounds
+const findMatchById = (
+  matchId: string,
+  allMatches: {
+    groupMatches: Match[],
+    knockoutMatches: {
+      roundOf16: Match[],
+      quarterFinals: Match[],
+      semiFinals: Match[],
+      thirdPlace: Match,
+      final: Match
+    }
+  }
+): Match | undefined => {
+  // Check in group matches
+  const groupMatch = allMatches.groupMatches.find(m => m.id === matchId);
+  if (groupMatch) return groupMatch;
+  
+  // Check in round of 16
+  const r16Match = allMatches.knockoutMatches.roundOf16.find(m => m.id === matchId);
+  if (r16Match) return r16Match;
+  
+  // Check in quarter finals
+  const qfMatch = allMatches.knockoutMatches.quarterFinals.find(m => m.id === matchId);
+  if (qfMatch) return qfMatch;
+  
+  // Check in semi finals
+  const sfMatch = allMatches.knockoutMatches.semiFinals.find(m => m.id === matchId);
+  if (sfMatch) return sfMatch;
+  
+  // Check third place and final
+  if (allMatches.knockoutMatches.thirdPlace.id === matchId) return allMatches.knockoutMatches.thirdPlace;
+  if (allMatches.knockoutMatches.final.id === matchId) return allMatches.knockoutMatches.final;
+  
+  return undefined;
+};
+
+// Get the winner and loser teams of a match
+const getMatchWinnerAndLoser = (
+  match: Match,
+  qualifiedTeams?: QualifiedTeam[]
+): { winner: string, loser: string } | null => {
+  if (match.score1 === undefined || match.score2 === undefined) {
+    return null; // Match hasn't been played yet
+  }
+  
+  let team1 = match.team1;
+  let team2 = match.team2;
+  
+  // If the match doesn't have team1/team2 explicitly set, but has a description,
+  // try to get the team names from the description
+  if ((!team1 || !team2) && match.description && qualifiedTeams) {
+    const teamsFromDescription = getTeamsForMatch(match.description, qualifiedTeams);
+    if (teamsFromDescription) {
+      const parts = teamsFromDescription.split(' - ');
+      if (parts.length === 2) {
+        team1 = parts[0];
+        team2 = parts[1];
+      }
+    }
+  }
+  
+  if (!team1 || !team2) {
+    return null; // Can't determine the teams
+  }
+  
+  if (match.score1 > match.score2) {
+    return { winner: team1, loser: team2 };
+  } else if (match.score2 > match.score1) {
+    return { winner: team2, loser: team1 };
+  }
+  
+  // In case of a draw (this shouldn't happen in knockout matches, but just in case)
+  return null;
+};
+
+// Get team names for a match based on previousMatchIds
+const getTeamNamesFromPreviousMatches = (
+  match: Match, 
+  allMatches: {
+    groupMatches: Match[],
+    knockoutMatches: {
+      roundOf16: Match[],
+      quarterFinals: Match[],
+      semiFinals: Match[],
+      thirdPlace: Match,
+      final: Match
+    }
+  },
+  qualifiedTeams: QualifiedTeam[]
+): string => {
+  if (!match.previousMatchIds || match.previousMatchIds.length === 0) {
+    return match.team1 && match.team2 ? `${match.team1} - ${match.team2}` : match.description || '';
+  }
+  
+  // For the third place match, we need the losers of the previous matches
+  const isThirdPlaceMatch = match.id === 'TP-1';
+  
+  // Find the previous matches and get their winners/losers
+  const team1Match = findMatchById(match.previousMatchIds[0], allMatches);
+  const team2Match = match.previousMatchIds.length > 1 ? findMatchById(match.previousMatchIds[1], allMatches) : undefined;
+  
+  if (!team1Match) {
+    return match.description || '';
+  }
+  
+  const team1Result = getMatchWinnerAndLoser(team1Match, qualifiedTeams);
+  const team2Result = team2Match ? getMatchWinnerAndLoser(team2Match, qualifiedTeams) : null;
+  
+  if (!team1Result) {
+    return match.description || ''; // First match is a draw or hasn't been played
+  }
+  
+  if (team2Match && !team2Result) {
+    return match.description || ''; // Second match is a draw or hasn't been played
+  }
+  
+  // For third place match, use losers instead of winners
+  const team1 = isThirdPlaceMatch ? team1Result.loser : team1Result.winner;
+  const team2 = team2Result ? (isThirdPlaceMatch ? team2Result.loser : team2Result.winner) : '';
+  
+  return team2 ? `${team1} - ${team2}` : team1;
+};
+
 interface MatchControlProps {
   match: Match;
   onUpdate: (updates: Partial<Match>) => void;
   qualifiedTeams?: QualifiedTeam[];
+  allMatches?: {
+    groupMatches: Match[],
+    knockoutMatches: {
+      roundOf16: Match[],
+      quarterFinals: Match[],
+      semiFinals: Match[],
+      thirdPlace: Match,
+      final: Match
+    }
+  };
 }
 
-const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedTeams }) => {
+const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedTeams, allMatches }) => {
   const getMatchState = (match: Match) => {
     if (match.isPlaying) return 'playing';
     if (match.score1 !== undefined || match.score2 !== undefined) return 'finished';
@@ -87,7 +221,19 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
   };
 
   const matchState = getMatchState(match);
-  const qualifiedTeamsMatch = match.description && qualifiedTeams ? getTeamsForMatch(match.description, qualifiedTeams) : null;
+  
+  // Get teams to display
+  let matchTeams = '';
+  
+  if (match.previousMatchIds && match.previousMatchIds.length > 0 && allMatches && qualifiedTeams) {
+    matchTeams = getTeamNamesFromPreviousMatches(match, allMatches, qualifiedTeams);
+  } else if (match.description && qualifiedTeams) {
+    matchTeams = getTeamsForMatch(match.description, qualifiedTeams) || '';
+  } else if (match.team1 && match.team2) {
+    matchTeams = `${match.team1} vs ${match.team2}`;
+  } else {
+    matchTeams = match.description || 'Per determinar';
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 space-y-4">
@@ -99,7 +245,7 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
       <div className="text-center space-y-1">
         {match.description && <div className="text-sm text-gray-600">{match.description}</div>}
         <div className="font-bold">
-          {qualifiedTeamsMatch || `${match.team1 || '?'} vs ${match.team2 || '?'}`}
+          {matchTeams}
         </div>
       </div>
 
@@ -213,6 +359,11 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
 export const RefereeMatchControl: React.FC = () => {
   const { matches, updateMatch, knockoutMatches, updateKnockoutMatch } = useMatches();
   const qualifiedTeams = getQualifiedTeams(matches);
+  
+  const allMatches = {
+    groupMatches: matches,
+    knockoutMatches
+  };
 
   return (
     <div className="space-y-8">
@@ -260,6 +411,7 @@ export const RefereeMatchControl: React.FC = () => {
               match={match}
               onUpdate={(updates) => updateKnockoutMatch('quarterFinals', index, updates)}
               qualifiedTeams={qualifiedTeams}
+              allMatches={allMatches}
             />
           ))}
         </div>
@@ -274,6 +426,7 @@ export const RefereeMatchControl: React.FC = () => {
               match={match}
               onUpdate={(updates) => updateKnockoutMatch('semiFinals', index, updates)}
               qualifiedTeams={qualifiedTeams}
+              allMatches={allMatches}
             />
           ))}
         </div>
@@ -286,6 +439,7 @@ export const RefereeMatchControl: React.FC = () => {
             match={knockoutMatches.thirdPlace}
             onUpdate={(updates) => updateKnockoutMatch('thirdPlace', 0, updates)}
             qualifiedTeams={qualifiedTeams}
+            allMatches={allMatches}
           />
         </div>
 
@@ -295,6 +449,7 @@ export const RefereeMatchControl: React.FC = () => {
             match={knockoutMatches.final}
             onUpdate={(updates) => updateKnockoutMatch('final', 0, updates)}
             qualifiedTeams={qualifiedTeams}
+            allMatches={allMatches}
           />
         </div>
       </div>
