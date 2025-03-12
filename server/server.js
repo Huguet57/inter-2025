@@ -70,7 +70,22 @@ app.put('/api/matches/:index', async (req, res) => {
       return res.status(404).json({ error: 'Match not found' });
     }
     
+    // Check if we should explicitly clear scores
+    // This handles both cases:
+    // 1. When isPlaying is false and scores are missing from updates
+    // 2. When scores are explicitly set to null or undefined in the request
+    if ((updates.isPlaying === false && !('score1' in updates) && !('score2' in updates)) ||
+        updates.score1 === null || updates.score2 === null) {
+      updates.score1 = null;
+      updates.score2 = null;
+    }
+    
     matches[index] = { ...matches[index], ...updates };
+    
+    // Clean up null values if we still need to preserve them in the data file
+    if (matches[index].score1 === null) matches[index].score1 = undefined;
+    if (matches[index].score2 === null) matches[index].score2 = undefined;
+    
     await fs.writeFile(MATCHES_FILE, JSON.stringify(matches, null, 2));
     
     res.json(matches[index]);
@@ -101,13 +116,31 @@ app.put('/api/knockout/:round/:index', async (req, res) => {
     const data = await fs.readFile(KNOCKOUT_FILE, 'utf8');
     const knockoutMatches = JSON.parse(data);
     
+    // Check if we should explicitly clear scores
+    // This handles both cases:
+    // 1. When isPlaying is false and scores are missing from updates
+    // 2. When scores are explicitly set to null or undefined in the request
+    if ((updates.isPlaying === false && !('score1' in updates) && !('score2' in updates)) ||
+        updates.score1 === null || updates.score2 === null) {
+      updates.score1 = null;
+      updates.score2 = null;
+    }
+    
     if (round === 'thirdPlace' || round === 'final') {
       knockoutMatches[round] = { ...knockoutMatches[round], ...updates };
+      
+      // Clean up null values
+      if (knockoutMatches[round].score1 === null) knockoutMatches[round].score1 = undefined;
+      if (knockoutMatches[round].score2 === null) knockoutMatches[round].score2 = undefined;
     } else {
       if (!knockoutMatches[round] || idx < 0 || idx >= knockoutMatches[round].length) {
         return res.status(404).json({ error: 'Match not found' });
       }
       knockoutMatches[round][idx] = { ...knockoutMatches[round][idx], ...updates };
+      
+      // Clean up null values
+      if (knockoutMatches[round][idx].score1 === null) knockoutMatches[round][idx].score1 = undefined;
+      if (knockoutMatches[round][idx].score2 === null) knockoutMatches[round][idx].score2 = undefined;
     }
     
     await fs.writeFile(KNOCKOUT_FILE, JSON.stringify(knockoutMatches, null, 2));
