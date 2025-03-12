@@ -112,7 +112,7 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
             value={match.score1 ?? ''}
             onChange={(e) => handleScoreChange(1, e.target.value, 'set')}
             className="w-16 text-center border rounded-md py-2 text-lg font-medium"
-            placeholder="0"
+            placeholder="-"
           />
           
           <button
@@ -139,7 +139,7 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
             value={match.score2 ?? ''}
             onChange={(e) => handleScoreChange(2, e.target.value, 'set')}
             className="w-16 text-center border rounded-md py-2 text-lg font-medium"
-            placeholder="0"
+            placeholder="-"
           />
           
           <button
@@ -169,7 +169,11 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
         </button>
         
         <button
-          onClick={() => onUpdate({ isPlaying: true })}
+          onClick={() => onUpdate({ 
+            isPlaying: true,
+            score1: match.score1 ?? 0,
+            score2: match.score2 ?? 0
+          })}
           className={`px-4 py-2 rounded-md flex items-center space-x-2 transition-all ${
             matchState === 'playing'
               ? 'bg-yellow-500 text-white ring-2 ring-yellow-500 shadow-md'
@@ -181,7 +185,11 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
         </button>
         
         <button
-          onClick={() => onUpdate({ isPlaying: false })}
+          onClick={() => onUpdate({ 
+            isPlaying: false,
+            score1: match.score1 ?? 0,
+            score2: match.score2 ?? 0
+          })}
           className={`px-4 py-2 rounded-md flex items-center space-x-2 transition-all ${
             matchState === 'finished'
               ? 'bg-green-600 text-white ring-2 ring-green-600 shadow-md'
