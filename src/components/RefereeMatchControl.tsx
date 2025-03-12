@@ -108,13 +108,13 @@ const MatchControl: React.FC<MatchControlProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-center items-center space-x-6">
-        <div className="flex items-center space-x-2">
+      <div className="flex justify-center items-center space-x-4 sm:space-x-6">
+        <div className="flex items-center space-x-1 sm:space-x-2">
           <button
             onClick={() => handleScoreChange(1, -1, 'increment')}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
+            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
           >
-            <Minus className="w-4 h-4" />
+            <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           
           <input
@@ -122,26 +122,26 @@ const MatchControl: React.FC<MatchControlProps> = ({
             min="0"
             value={match.score1 ?? ''}
             onChange={(e) => handleScoreChange(1, e.target.value, 'set')}
-            className="w-16 text-center border rounded-md py-2 text-lg font-medium"
+            className="w-14 sm:w-16 text-center border rounded-md py-1.5 sm:py-2 text-base sm:text-lg font-medium"
             placeholder="-"
           />
           
           <button
             onClick={() => handleScoreChange(1, 1, 'increment')}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600"
+            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
         <span className="font-bold text-xl">-</span>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 sm:space-x-2">
           <button
             onClick={() => handleScoreChange(2, -1, 'increment')}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
+            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
           >
-            <Minus className="w-4 h-4" />
+            <Minus className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           
           <input
@@ -149,33 +149,33 @@ const MatchControl: React.FC<MatchControlProps> = ({
             min="0"
             value={match.score2 ?? ''}
             onChange={(e) => handleScoreChange(2, e.target.value, 'set')}
-            className="w-16 text-center border rounded-md py-2 text-lg font-medium"
+            className="w-14 sm:w-16 text-center border rounded-md py-1.5 sm:py-2 text-base sm:text-lg font-medium"
             placeholder="-"
           />
           
           <button
             onClick={() => handleScoreChange(2, 1, 'increment')}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600"
+            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full bg-blue-100 hover:bg-blue-200 text-blue-600"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
 
-      <div className="flex justify-center space-x-2">
+      <div className="flex justify-center space-x-2 sm:space-x-3">
         <button
           onClick={() => onUpdate({ 
             isPlaying: false,
             score1: undefined,
             score2: undefined
           })}
-          className={`px-4 py-2 rounded-md flex items-center space-x-2 transition-all ${
+          className={`px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base rounded-md flex items-center space-x-1.5 sm:space-x-2 transition-all ${
             matchState === 'pending'
               ? 'bg-gray-800 text-white ring-2 ring-gray-800 shadow-md'
               : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
           }`}
         >
-          <Clock className="w-4 h-4" />
+          <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
           <span>Per jugar</span>
         </button>
         
@@ -185,13 +185,13 @@ const MatchControl: React.FC<MatchControlProps> = ({
             score1: match.score1 ?? 0,
             score2: match.score2 ?? 0
           })}
-          className={`px-4 py-2 rounded-md flex items-center space-x-2 transition-all ${
+          className={`px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base rounded-md flex items-center space-x-1.5 sm:space-x-2 transition-all ${
             matchState === 'playing'
               ? 'bg-yellow-500 text-white ring-2 ring-yellow-500 shadow-md'
               : 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100'
           }`}
         >
-          <Play className="w-4 h-4" />
+          <Play className="w-4 h-4 sm:w-5 sm:h-5" />
           <span>En joc</span>
         </button>
         
@@ -201,13 +201,13 @@ const MatchControl: React.FC<MatchControlProps> = ({
             score1: match.score1 ?? 0,
             score2: match.score2 ?? 0
           })}
-          className={`px-4 py-2 rounded-md flex items-center space-x-2 transition-all ${
+          className={`px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base rounded-md flex items-center space-x-1.5 sm:space-x-2 transition-all ${
             matchState === 'finished'
               ? 'bg-green-600 text-white ring-2 ring-green-600 shadow-md'
               : 'bg-green-50 text-green-600 hover:bg-green-100'
           }`}
         >
-          <CheckCircle className="w-4 h-4" />
+          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           <span>Acabat</span>
         </button>
       </div>
@@ -301,7 +301,7 @@ export const RefereeMatchControl: React.FC = () => {
         <h1 className="text-3xl font-bold">Control d'Àrbitre</h1>
         <button 
           onClick={logout}
-          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+          className="px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
         >
           Tancar sessió
         </button>
