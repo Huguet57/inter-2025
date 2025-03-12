@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Trophy from 'lucide-react/dist/esm/icons/trophy';
 import Users from 'lucide-react/dist/esm/icons/users';
 import Calendar from 'lucide-react/dist/esm/icons/calendar';
 import Flag from 'lucide-react/dist/esm/icons/flag';
-import AlertCircle from 'lucide-react/dist/esm/icons/alert-circle';
 import Loader from 'lucide-react/dist/esm/icons/loader';
 import { GroupStage } from './components/GroupStage';
 import { MatchSchedule } from './components/MatchSchedule';
@@ -23,13 +22,7 @@ const LoadingIndicator = () => (
 // Content component that shows loading state if needed
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState<'groups' | 'schedule' | 'knockout' | 'referee'>('groups');
-  const [showDebug, setShowDebug] = useState(false);
   const { loading } = useMatches();
-
-  const handleForceReload = () => {
-    // Force a page reload to refresh data from the server
-    window.location.reload();
-  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -38,20 +31,6 @@ const AppContent = () => {
           <h1 className="text-3xl font-bold text-center">Inter de Marracos 2025</h1>
         </div>
       </header>
-
-      {showDebug && (
-        <div className="bg-yellow-50 border-b border-yellow-200 p-2">
-          <div className="container mx-auto flex items-center justify-between">
-            <div className="text-sm text-yellow-800">Mode diagnòstic actiu</div>
-            <button 
-              onClick={handleForceReload}
-              className="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-sm px-3 py-1 rounded"
-            >
-              Recarregar components
-            </button>
-          </div>
-        </div>
-      )}
 
       <nav className="bg-white shadow-md">
         <div className="container mx-auto px-4 overflow-x-auto">
