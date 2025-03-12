@@ -103,7 +103,7 @@ export const MatchSchedule: React.FC = () => {
                 )}
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight">{match.time}</td>
-                  <td className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight">P{match.field}</td>
+                  <td className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight">Pista {match.field}</td>
                   <td className="hidden md:table-cell px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight">{match.phase}</td>
                   <td className="px-1 sm:px-4 py-0.5 sm:py-3 leading-tight truncate">
                     {match.description && <span className="text-xs text-gray-500 block leading-none">{match.description}</span>}
