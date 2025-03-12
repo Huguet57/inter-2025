@@ -16,8 +16,8 @@ export interface Match {
   field: number;
   team1: string;
   team2: string;
-  score1?: number | null;
-  score2?: number | null;
+  score1?: number;
+  score2?: number;
   isPlaying?: boolean;
   description?: string;
   previousMatchIds?: string[];

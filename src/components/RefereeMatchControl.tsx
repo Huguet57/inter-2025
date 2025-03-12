@@ -38,8 +38,7 @@ const MatchControl: React.FC<MatchControlProps> = ({
 }) => {
   const getMatchState = (match: Match) => {
     if (match.isPlaying) return 'playing';
-    if (match.score1 !== undefined && match.score1 !== null || 
-        match.score2 !== undefined && match.score2 !== null) return 'finished';
+    if (match.score1 !== undefined || match.score2 !== undefined) return 'finished';
     return 'pending';
   };
 
@@ -165,8 +164,8 @@ const MatchControl: React.FC<MatchControlProps> = ({
         <button
           onClick={() => onUpdate({ 
             isPlaying: false,
-            score1: null,
-            score2: null
+            score1: undefined,
+            score2: undefined
           })}
           className={`px-4 py-2 rounded-md flex items-center space-x-2 transition-all ${
             matchState === 'pending'
