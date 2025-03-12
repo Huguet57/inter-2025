@@ -104,7 +104,7 @@ const AppContent = () => {
         </div>
       </nav>
 
-      <main className="container mx-auto px-2 sm:px-4 py-8">
+      <main className={`container mx-auto ${activeTab === 'schedule' ? 'px-0 py-2' : 'px-2 sm:px-4 py-8'}`}>
         {loading ? (
           <LoadingIndicator />
         ) : (
