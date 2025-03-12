@@ -9,35 +9,6 @@ import { useMatches } from '../context/MatchContext';
 import { groups } from '../data/tournament';
 import { calculateGroupStandings, getQualifiedTeamMap, resolveKnockoutMatchTeams } from '../utils/knockoutUtils';
 
-// Helper function to get name of previous match
-const getPreviousMatchDescription = (
-  previousMatchIds: string[] | undefined,
-  allMatches: {
-    groupMatches: Match[],
-    knockoutMatches: {
-      roundOf16: Match[],
-      quarterFinals: Match[],
-      semiFinals: Match[],
-      thirdPlace: Match,
-      final: Match
-    }
-  },
-  teamMap: Record<string, string>
-): string => {
-  if (!previousMatchIds || previousMatchIds.length === 0) return '';
-  
-  const descriptions = previousMatchIds.map(id => {
-    const match = allMatches.knockoutMatches.roundOf16.find(m => m.id === id);
-    if (match) {
-      const teamNames = resolveKnockoutMatchTeams(match, teamMap, allMatches);
-      return `${match.description} (${teamNames})`;
-    }
-    return id;
-  });
-  
-  return descriptions.join(' i ');
-};
-
 interface MatchControlProps {
   match: Match;
   onUpdate: (updates: Partial<Match>) => void;
@@ -97,10 +68,6 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, teamMap = 
   } else {
     matchTeams = match.description || 'Per determinar';
   }
-
-  // Get previous match info if available
-  const previousMatchInfo = match.previousMatchIds && allMatches && teamMap ? 
-    getPreviousMatchDescription(match.previousMatchIds, allMatches, teamMap) : '';
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 space-y-4">
@@ -234,7 +201,7 @@ export const RefereeMatchControl: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-xl mx-auto">
       {!matches.every(m => m.score1 !== undefined && m.score2 !== undefined && !m.isPlaying) && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-yellow-700">
@@ -245,7 +212,7 @@ export const RefereeMatchControl: React.FC = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4">Fase de Grups</h2>
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1">
           {matches.map((match, index) => (
             <MatchControl
               key={index}
@@ -258,7 +225,7 @@ export const RefereeMatchControl: React.FC = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4">Vuitens de Final</h2>
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1">
           {knockoutMatches.roundOf16.map((match, index) => (
             <MatchControl
               key={index}
@@ -272,7 +239,7 @@ export const RefereeMatchControl: React.FC = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4">Quarts de Final</h2>
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1">
           {knockoutMatches.quarterFinals.map((match, index) => (
             <MatchControl
               key={index}
@@ -287,7 +254,7 @@ export const RefereeMatchControl: React.FC = () => {
 
       <div>
         <h2 className="text-2xl font-bold mb-4">Semifinals</h2>
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1">
           {knockoutMatches.semiFinals.map((match, index) => (
             <MatchControl
               key={index}
@@ -300,9 +267,9 @@ export const RefereeMatchControl: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-        <div>
-          <h2 className="text-2xl font-bold mb-4">3r i 4t Lloc</h2>
+      <div>
+        <h2 className="text-2xl font-bold mb-4">3r i 4t Lloc</h2>
+        <div className="grid gap-4 grid-cols-1">
           <MatchControl
             match={knockoutMatches.thirdPlace}
             onUpdate={(updates) => updateKnockoutMatch('thirdPlace', 0, updates)}
@@ -310,9 +277,11 @@ export const RefereeMatchControl: React.FC = () => {
             allMatches={allMatches}
           />
         </div>
+      </div>
 
-        <div>
-          <h2 className="text-2xl font-bold mb-4">Final</h2>
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Final</h2>
+        <div className="grid gap-4 grid-cols-1">
           <MatchControl
             match={knockoutMatches.final}
             onUpdate={(updates) => updateKnockoutMatch('final', 0, updates)}
