@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Match } from '../data/tournament';
 import Play from 'lucide-react/dist/esm/icons/play';
 import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
@@ -6,7 +6,9 @@ import Clock from 'lucide-react/dist/esm/icons/clock';
 import Plus from 'lucide-react/dist/esm/icons/plus';
 import Minus from 'lucide-react/dist/esm/icons/minus';
 import Loader from 'lucide-react/dist/esm/icons/loader';
+import Lock from 'lucide-react/dist/esm/icons/lock';
 import { useMatches } from '../context/MatchContext';
+import { useAuth } from '../context/AuthContext';
 import { groups } from '../data/tournament';
 import { calculateGroupStandings, getQualifiedTeamMap, resolveKnockoutMatchTeams } from '../utils/knockoutUtils';
 
@@ -215,6 +217,22 @@ const MatchControl: React.FC<MatchControlProps> = ({
 
 export const RefereeMatchControl: React.FC = () => {
   const { matches, updateMatch, knockoutMatches, updateKnockoutMatch, loading } = useMatches();
+  const { isReferee, login, logout } = useAuth();
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === 'tenimaleta') {
+      // Correct password
+      login();
+      setError('');
+    } else {
+      // Incorrect password
+      setError('Contrasenya incorrecta');
+    }
+  };
+
   const qualifiedTeams = calculateGroupStandings(groups, matches);
   const teamMap = getQualifiedTeamMap(qualifiedTeams);
   
@@ -237,8 +255,58 @@ export const RefereeMatchControl: React.FC = () => {
     );
   }
 
+  if (!isReferee) {
+    return (
+      <div className="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
+        <div className="flex items-center justify-center mb-6">
+          <Lock className="w-8 h-8 text-blue-600 mr-2" />
+          <h2 className="text-2xl font-bold text-gray-800">Àrea d'Àrbitres</h2>
+        </div>
+        
+        <p className="mb-6 text-gray-600 text-center">
+          Aquesta secció és només per àrbitres. Si ets àrbitre, introdueix la contrasenya.
+        </p>
+        
+        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Contrasenya
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Introdueix la contrasenya"
+              autoComplete="off"
+            />
+            {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+          </div>
+          
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          >
+            Accedir
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 max-w-xl mx-auto">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Control d'Àrbitre</h1>
+        <button 
+          onClick={logout}
+          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+        >
+          Tancar sessió
+        </button>
+      </div>
+
       <div>
         <h2 className="text-2xl font-bold mb-4">Fase de Grups</h2>
         <div className="grid gap-4 grid-cols-1">

@@ -10,6 +10,7 @@ import { MatchSchedule } from './components/MatchSchedule';
 import { KnockoutStage } from './components/KnockoutStage';
 import { RefereeMatchControl } from './components/RefereeMatchControl';
 import { MatchProvider, useMatches } from './context/MatchContext';
+import { AuthProvider } from './context/AuthContext';
 
 // Loading indicator component
 const LoadingIndicator = () => (
@@ -121,9 +122,11 @@ const AppContent = () => {
 
 function App() {
   return (
-    <MatchProvider>
-      <AppContent />
-    </MatchProvider>
+    <AuthProvider>
+      <MatchProvider>
+        <AppContent />
+      </MatchProvider>
+    </AuthProvider>
   );
 }
 
