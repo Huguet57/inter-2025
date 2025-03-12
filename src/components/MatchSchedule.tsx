@@ -61,6 +61,9 @@ export const MatchSchedule: React.FC = () => {
     return timeA.localeCompare(timeB);
   });
 
+  // Find the index of the first knockout match
+  const firstKnockoutIndex = allMatchesArray.findIndex(match => match.phase !== 'Fase de Grups');
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white rounded-lg shadow-md">
@@ -74,20 +77,38 @@ export const MatchSchedule: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {allMatchesArray.map((match, index) => (
-            <tr key={index} className="border-t hover:bg-gray-50">
-              <td className="px-4 py-2">{match.time}</td>
-              <td className="px-4 py-2">Pista {match.field}</td>
-              <td className="px-4 py-2">{match.phase}</td>
-              <td className="px-4 py-2">
-                {match.description && <span className="text-xs text-gray-500 block">{match.description}</span>}
-                <span className={!groupsCompleted && (match.description || match.previousMatchIds) ? 'text-yellow-600' : ''}>
-                  {getMatchTeams(match)}
-                </span>
-              </td>
-              <td className="px-4 py-2 text-center">{getMatchStatus(match)}</td>
-            </tr>
-          ))}
+          {allMatchesArray.map((match, index) => {
+            // Add notification banner before the first knockout match
+            const showBanner = !groupsCompleted && index === firstKnockoutIndex;
+            
+            return (
+              <>
+                {showBanner && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-2">
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                        <p className="text-yellow-700 text-center">
+                          Els equips mostrats a sota són una estimació basada en la classificació actual dels grups
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                <tr key={index} className="border-t hover:bg-gray-50">
+                  <td className="px-4 py-2">{match.time}</td>
+                  <td className="px-4 py-2">Pista {match.field}</td>
+                  <td className="px-4 py-2">{match.phase}</td>
+                  <td className="px-4 py-2">
+                    {match.description && <span className="text-xs text-gray-500 block">{match.description}</span>}
+                    <span className={!groupsCompleted && (match.description || match.previousMatchIds) ? 'text-yellow-600' : ''}>
+                      {getMatchTeams(match)}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-center">{getMatchStatus(match)}</td>
+                </tr>
+              </>
+            );
+          })}
         </tbody>
       </table>
     </div>
