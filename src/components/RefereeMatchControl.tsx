@@ -62,9 +62,22 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, teamMap = 
   let matchTeams = '';
   
   if (match.team1 && match.team2) {
-    matchTeams = `${match.team1} vs ${match.team2}`;
+    matchTeams = `${match.team1} - ${match.team2}`;
   } else if (allMatches && teamMap) {
-    matchTeams = resolveKnockoutMatchTeams(match, teamMap, allMatches) || match.description || 'Per determinar';
+    // Intentar resoldre els equips d'aquest partit
+    const resolved = resolveKnockoutMatchTeams(match, teamMap, allMatches);
+    matchTeams = resolved || match.description || 'Per determinar';
+
+    // Si encara tenim la descripció original, intentar parsejar els equips
+    if (matchTeams === match.description && match.description) {
+      const descParts = match.description.split('-').map(part => part.trim());
+      if (descParts.length === 2) {
+        // Intentar substituir les posicions per noms d'equips
+        const team1 = teamMap[descParts[0]] || descParts[0];
+        const team2 = teamMap[descParts[1]] || descParts[1];
+        matchTeams = `${team1} - ${team2}`;
+      }
+    }
   } else {
     matchTeams = match.description || 'Per determinar';
   }
@@ -218,6 +231,8 @@ export const RefereeMatchControl: React.FC = () => {
               key={index}
               match={match}
               onUpdate={(updates) => updateMatch(index, updates)}
+              teamMap={teamMap}
+              allMatches={allMatches}
             />
           ))}
         </div>
@@ -232,6 +247,7 @@ export const RefereeMatchControl: React.FC = () => {
               match={match}
               onUpdate={(updates) => updateKnockoutMatch('roundOf16', index, updates)}
               teamMap={teamMap}
+              allMatches={allMatches}
             />
           ))}
         </div>
