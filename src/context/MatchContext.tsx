@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Match, groupMatches as initialGroupMatches, knockoutMatches as initialKnockoutMatches } from '../data/tournament';
 
+// Base URL for API requests
+const API_BASE_URL = 'https://demo-api.tenimaleta.com';
+
 interface MatchContextType {
   matches: Match[];
   knockoutMatches: {
@@ -35,7 +38,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setLoading(true);
         
         // Fetch group matches
-        const matchesResponse = await fetch('/api/matches');
+        const matchesResponse = await fetch(`${API_BASE_URL}/api/matches`);
         if (matchesResponse.ok) {
           const matchesData = await matchesResponse.json();
           if (Array.isArray(matchesData)) {
@@ -44,7 +47,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         }
         
         // Fetch knockout matches
-        const knockoutResponse = await fetch('/api/knockout');
+        const knockoutResponse = await fetch(`${API_BASE_URL}/api/knockout`);
         if (knockoutResponse.ok) {
           const knockoutData = await knockoutResponse.json();
           if (knockoutData) {
@@ -76,7 +79,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setMatches(newMatches);
       
       // Send update to API
-      const response = await fetch(`/api/matches/${index}`, {
+      const response = await fetch(`${API_BASE_URL}/api/matches/${index}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -121,7 +124,7 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       });
       
       // Send update to API
-      const response = await fetch(`/api/knockout/${round}/${index}`, {
+      const response = await fetch(`${API_BASE_URL}/api/knockout/${round}/${index}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
