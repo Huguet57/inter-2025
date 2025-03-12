@@ -12,13 +12,12 @@ interface MatchContextType {
   };
   updateMatch: (index: number, updates: Partial<Match>) => void;
   updateKnockoutMatch: (round: 'roundOf16' | 'quarterFinals' | 'semiFinals' | 'thirdPlace' | 'final', index: number, updates: Partial<Match>) => void;
+  loading: boolean;
 }
 
 const MatchContext = createContext<MatchContextType | undefined>(undefined);
 
 export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  console.log('Inicialitzant MatchProvider amb', initialGroupMatches.length, 'partits de grup');
-  
   const [matches, setMatches] = useState<Match[]>(initialGroupMatches);
   const [knockoutMatches, setKnockoutMatches] = useState({
     roundOf16: initialKnockoutMatches.roundOf16.map(m => ({ ...m, team1: '', team2: '' })),
@@ -27,43 +26,121 @@ export const MatchProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     thirdPlace: { ...initialKnockoutMatches.thirdPlace, team1: '', team2: '' },
     final: { ...initialKnockoutMatches.final, team1: '', team2: '' }
   });
+  const [loading, setLoading] = useState(true);
 
-  // Imprimir a consola per depuració
+  // Fetch data from API on initial load
   useEffect(() => {
-    console.log('Partits disponibles al context:', matches.length);
-  }, [matches]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch group matches
+        const matchesResponse = await fetch('/api/matches');
+        if (matchesResponse.ok) {
+          const matchesData = await matchesResponse.json();
+          if (Array.isArray(matchesData)) {
+            setMatches(matchesData);
+          }
+        }
+        
+        // Fetch knockout matches
+        const knockoutResponse = await fetch('/api/knockout');
+        if (knockoutResponse.ok) {
+          const knockoutData = await knockoutResponse.json();
+          if (knockoutData) {
+            setKnockoutMatches({
+              roundOf16: Array.isArray(knockoutData.roundOf16) ? knockoutData.roundOf16 : initialKnockoutMatches.roundOf16,
+              quarterFinals: Array.isArray(knockoutData.quarterFinals) ? knockoutData.quarterFinals : initialKnockoutMatches.quarterFinals,
+              semiFinals: Array.isArray(knockoutData.semiFinals) ? knockoutData.semiFinals : initialKnockoutMatches.semiFinals,
+              thirdPlace: knockoutData.thirdPlace || initialKnockoutMatches.thirdPlace,
+              final: knockoutData.final || initialKnockoutMatches.final
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const updateMatch = (index: number, updates: Partial<Match>) => {
-    const newMatches = [...matches];
-    newMatches[index] = { ...newMatches[index], ...updates };
-    setMatches(newMatches);
-    // Here you would typically make an API call to persist the changes
+    fetchData();
+  }, []);
+
+  // Update a group match
+  const updateMatch = async (index: number, updates: Partial<Match>) => {
+    try {
+      // Optimistically update UI
+      const newMatches = [...matches];
+      newMatches[index] = { ...newMatches[index], ...updates };
+      setMatches(newMatches);
+      
+      // Send update to API
+      const response = await fetch(`/api/matches/${index}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to update match');
+        // Revert to original state if API update fails
+        setMatches(matches);
+      }
+    } catch (error) {
+      console.error('Error updating match:', error);
+      // Revert to original state on error
+      setMatches(matches);
+    }
   };
 
-  const updateKnockoutMatch = (
+  // Update a knockout match
+  const updateKnockoutMatch = async (
     round: 'roundOf16' | 'quarterFinals' | 'semiFinals' | 'thirdPlace' | 'final',
     index: number,
     updates: Partial<Match>
   ) => {
-    setKnockoutMatches(prev => {
-      if (round === 'thirdPlace' || round === 'final') {
+    try {
+      // Optimistically update UI
+      setKnockoutMatches(prev => {
+        if (round === 'thirdPlace' || round === 'final') {
+          return {
+            ...prev,
+            [round]: { ...prev[round], ...updates }
+          };
+        }
+        
+        const newRound = [...prev[round]];
+        newRound[index] = { ...newRound[index], ...updates };
         return {
           ...prev,
-          [round]: { ...prev[round], ...updates }
+          [round]: newRound
         };
-      }
+      });
       
-      const newRound = [...prev[round]];
-      newRound[index] = { ...newRound[index], ...updates };
-      return {
-        ...prev,
-        [round]: newRound
-      };
-    });
+      // Send update to API
+      const response = await fetch(`/api/knockout/${round}/${index}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to update knockout match');
+        // You could revert the state here if needed
+      }
+    } catch (error) {
+      console.error('Error updating knockout match:', error);
+      // You could revert the state here if needed
+    }
   };
 
   return (
-    <MatchContext.Provider value={{ matches, knockoutMatches, updateMatch, updateKnockoutMatch }}>
+    <MatchContext.Provider value={{ matches, knockoutMatches, updateMatch, updateKnockoutMatch, loading }}>
       {children}
     </MatchContext.Provider>
   );

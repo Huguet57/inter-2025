@@ -5,6 +5,7 @@ import CheckCircle from 'lucide-react/dist/esm/icons/check-circle';
 import Clock from 'lucide-react/dist/esm/icons/clock';
 import Plus from 'lucide-react/dist/esm/icons/plus';
 import Minus from 'lucide-react/dist/esm/icons/minus';
+import Loader from 'lucide-react/dist/esm/icons/loader';
 import { useMatches } from '../context/MatchContext';
 import { groups } from '../data/tournament';
 import { calculateGroupStandings, getQualifiedTeamMap, resolveKnockoutMatchTeams } from '../utils/knockoutUtils';
@@ -213,7 +214,7 @@ const MatchControl: React.FC<MatchControlProps> = ({
 };
 
 export const RefereeMatchControl: React.FC = () => {
-  const { matches, updateMatch, knockoutMatches, updateKnockoutMatch } = useMatches();
+  const { matches, updateMatch, knockoutMatches, updateKnockoutMatch, loading } = useMatches();
   const qualifiedTeams = calculateGroupStandings(groups, matches);
   const teamMap = getQualifiedTeamMap(qualifiedTeams);
   
@@ -226,6 +227,15 @@ export const RefereeMatchControl: React.FC = () => {
   const groupsCompleted = matches.every(m => 
     m.score1 !== undefined && m.score2 !== undefined && !m.isPlaying
   );
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8">
+        <Loader className="w-8 h-8 animate-spin text-blue-600 mb-4" />
+        <p className="text-gray-600">Carregant dades del torneig...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-xl mx-auto">
