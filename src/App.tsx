@@ -26,15 +26,7 @@ function App() {
       <div className="min-h-screen bg-gray-100">
         <header className="bg-blue-600 text-white py-6">
           <div className="container mx-auto px-4 relative">
-            <h1 className="text-3xl font-bold text-center">Torneig de Futbol</h1>
-            
-            <button 
-              onClick={() => setShowDebug(!showDebug)}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white opacity-70 hover:opacity-100"
-              title="Opcions de diagnòstic"
-            >
-              <AlertCircle className="w-5 h-5" />
-            </button>
+            <h1 className="text-3xl font-bold text-center">Inter de Marracos 2025</h1>
           </div>
         </header>
 
