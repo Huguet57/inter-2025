@@ -68,16 +68,22 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
     type: 'set' | 'increment'
   ) => {
     const key = team === 1 ? 'score1' : 'score2';
+    const otherKey = team === 1 ? 'score2' : 'score1';
     let newValue: number;
     
     if (type === 'set') {
       newValue = typeof value === 'string' ? parseInt(value) || 0 : value;
+      onUpdate({ [key]: newValue });
     } else {
       const currentValue = match[key] ?? 0;
       newValue = Math.max(0, currentValue + (value as number));
+      // If we're incrementing and the other score is undefined, set it to 0
+      if (match[otherKey] === undefined) {
+        onUpdate({ [key]: newValue, [otherKey]: 0 });
+      } else {
+        onUpdate({ [key]: newValue });
+      }
     }
-    
-    onUpdate({ [key]: newValue });
   };
 
   const matchState = getMatchState(match);
