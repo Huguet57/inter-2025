@@ -84,7 +84,7 @@ export const MatchSchedule: React.FC = () => {
           <tr className="bg-gray-100 border-b border-gray-200">
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[25%] sm:w-auto">Hora</th>
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[15%] sm:w-auto">Pista</th>
-            <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[45%] sm:w-auto">Partit</th>
+            <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[45%] sm:w-auto md:w-[50%]">Partit</th>
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-center w-[15%] sm:w-auto">Resultat</th>
           </tr>
         </thead>
