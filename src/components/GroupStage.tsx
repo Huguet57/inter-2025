@@ -1,7 +1,7 @@
 import React from 'react';
 import { groups, groupMatches, Team } from '../data/tournament';
 
-const calculateTeamStats = () => {
+export const calculateTeamStats = () => {
   // Create a deep copy of groups to avoid mutating the original data
   const updatedGroups = groups.map(group => group.map(team => ({ ...team })));
   
