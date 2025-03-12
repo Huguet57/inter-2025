@@ -1,0 +1,94 @@
+{
+  "hash": "0c93dd5b",
+  "configHash": "459eb6ca",
+  "lockfileHash": "5f5b4a4b",
+  "browserHash": "cd981b00",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "2cdede11",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "21b74a27",
+      "needsInterop": true
+    },
+    "lucide-react/dist/esm/icons/trophy": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/trophy.js",
+      "file": "lucide-react_dist_esm_icons_trophy.js",
+      "fileHash": "9524d57e",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/users": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/users.js",
+      "file": "lucide-react_dist_esm_icons_users.js",
+      "fileHash": "e0d0f6a9",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/calendar": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/calendar.js",
+      "file": "lucide-react_dist_esm_icons_calendar.js",
+      "fileHash": "be536e18",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/flag": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/flag.js",
+      "file": "lucide-react_dist_esm_icons_flag.js",
+      "fileHash": "9a8b3ba7",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/loader": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/loader.js",
+      "file": "lucide-react_dist_esm_icons_loader.js",
+      "fileHash": "be5eb1d4",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/play": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/play.js",
+      "file": "lucide-react_dist_esm_icons_play.js",
+      "fileHash": "72965e0c",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/check-circle": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/check-circle.js",
+      "file": "lucide-react_dist_esm_icons_check-circle.js",
+      "fileHash": "5a1e36a7",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/clock": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/clock.js",
+      "file": "lucide-react_dist_esm_icons_clock.js",
+      "fileHash": "5b57aa15",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/plus": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/plus.js",
+      "file": "lucide-react_dist_esm_icons_plus.js",
+      "fileHash": "46387974",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/minus": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/minus.js",
+      "file": "lucide-react_dist_esm_icons_minus.js",
+      "fileHash": "d541795a",
+      "needsInterop": false
+    },
+    "lucide-react/dist/esm/icons/lock": {
+      "src": "../../node_modules/lucide-react/dist/esm/icons/lock.js",
+      "file": "lucide-react_dist_esm_icons_lock.js",
+      "fileHash": "b5fa55fe",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-KYXJG6KH": {
+      "file": "chunk-KYXJG6KH.js"
+    },
+    "chunk-UTEJFLXC": {
+      "file": "chunk-UTEJFLXC.js"
+    }
+  }
+}

@@ -94,7 +94,7 @@ export const MatchSchedule: React.FC = () => {
                     </td>
                   </tr>
                 )}
-                <tr key={index} className="border-t hover:bg-gray-50">
+                <tr key={index} className="border-t border-b hover:bg-gray-50">
                   <td className="px-4 py-2">{match.time}</td>
                   <td className="px-4 py-2">Pista {match.field}</td>
                   <td className="px-4 py-2">{match.phase}</td>
