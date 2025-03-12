@@ -54,6 +54,26 @@ export const KnockoutStage: React.FC = () => {
   const qualifiedTeams = getQualifiedTeams(matches);
   const groupsCompleted = areGroupMatchesComplete(matches);
   
+  const getMatchStatus = (match: Match) => {
+    if (match.isPlaying) {
+      return (
+        <span className="text-yellow-500 font-bold">
+          {match.score1} - {match.score2}
+        </span>
+      );
+    }
+    
+    if (match.score1 !== undefined && match.score2 !== undefined) {
+      return (
+        <span className="font-bold">
+          {match.score1} - {match.score2}
+        </span>
+      );
+    }
+
+    return <span className="text-gray-500">Per jugar</span>;
+  };
+  
   return (
     <div className="space-y-8">
       {!groupsCompleted && (
@@ -75,6 +95,7 @@ export const KnockoutStage: React.FC = () => {
               <p className={`font-medium ${!groupsCompleted ? 'text-yellow-600' : ''}`}>
                 {getTeamsForMatch(match.description, qualifiedTeams)}
               </p>
+              <p className="mt-2">{getMatchStatus(match)}</p>
             </div>
           ))}
         </div>
@@ -88,6 +109,7 @@ export const KnockoutStage: React.FC = () => {
               <p className="font-semibold">{match.time}</p>
               <p>Pista {match.field}</p>
               <p>{match.description}</p>
+              <p className="mt-2">{getMatchStatus(match)}</p>
             </div>
           ))}
         </div>
@@ -101,6 +123,7 @@ export const KnockoutStage: React.FC = () => {
               <p className="font-semibold">{match.time}</p>
               <p>Pista {match.field}</p>
               <p>{match.description}</p>
+              <p className="mt-2">{getMatchStatus(match)}</p>
             </div>
           ))}
         </div>
@@ -113,6 +136,7 @@ export const KnockoutStage: React.FC = () => {
             <p className="font-semibold">{knockoutMatches.thirdPlace.time}</p>
             <p>Pista {knockoutMatches.thirdPlace.field}</p>
             <p>{knockoutMatches.thirdPlace.description}</p>
+            <p className="mt-2">{getMatchStatus(knockoutMatches.thirdPlace)}</p>
           </div>
         </div>
 
@@ -122,6 +146,7 @@ export const KnockoutStage: React.FC = () => {
             <p className="font-semibold">{knockoutMatches.final.time}</p>
             <p>Pista {knockoutMatches.final.field}</p>
             <p>{knockoutMatches.final.description}</p>
+            <p className="mt-2">{getMatchStatus(knockoutMatches.final)}</p>
           </div>
         </div>
       </div>
