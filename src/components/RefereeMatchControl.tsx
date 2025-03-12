@@ -59,11 +59,25 @@ const MatchControl: React.FC<MatchControlProps> = ({
     } else {
       const currentValue = match[key] ?? 0;
       newValue = Math.max(0, currentValue + (value as number));
+      
+      // Check if match is in pending state
+      const isPending = match.isPlaying === false && match.score1 === undefined && match.score2 === undefined;
+      
       // If we're incrementing and the other score is undefined, set it to 0
       if (match[otherKey] === undefined) {
-        onUpdate({ [key]: newValue, [otherKey]: 0 });
+        // If match is pending, set it to playing state
+        if (isPending) {
+          onUpdate({ [key]: newValue, [otherKey]: 0, isPlaying: true });
+        } else {
+          onUpdate({ [key]: newValue, [otherKey]: 0 });
+        }
       } else {
-        onUpdate({ [key]: newValue });
+        // If match is pending, set it to playing state
+        if (isPending) {
+          onUpdate({ [key]: newValue, isPlaying: true });
+        } else {
+          onUpdate({ [key]: newValue });
+        }
       }
     }
   };
