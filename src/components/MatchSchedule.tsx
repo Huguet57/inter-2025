@@ -84,7 +84,6 @@ export const MatchSchedule: React.FC = () => {
           <tr className="bg-gray-100 border-b border-gray-200">
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[25%] sm:w-auto">Hora</th>
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[15%] sm:w-auto">Pista</th>
-            <th className="hidden md:table-cell px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left">Fase</th>
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[45%] sm:w-auto">Partit</th>
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-center w-[15%] sm:w-auto">Resultat</th>
           </tr>
@@ -98,16 +97,9 @@ export const MatchSchedule: React.FC = () => {
               <>
                 {showBanner && (
                   <tr>
-                    <td colSpan={4} className="px-1 sm:px-4 py-1 sm:py-3 md:hidden">
+                    <td colSpan={4} className="px-1 sm:px-4 py-1 sm:py-3">
                       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-1 sm:p-3 md:p-4">
                         <p className="text-yellow-700 text-center text-xs sm:text-sm">
-                          Els equips mostrats a sota són una estimació basada en la classificació actual dels grups
-                        </p>
-                      </div>
-                    </td>
-                    <td colSpan={5} className="hidden md:table-cell px-4 py-3">
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 sm:p-4">
-                        <p className="text-yellow-700 text-center text-sm">
                           Els equips mostrats a sota són una estimació basada en la classificació actual dels grups
                         </p>
                       </div>
@@ -117,13 +109,12 @@ export const MatchSchedule: React.FC = () => {
                 <tr key={index} className="hover:bg-gray-50">
                   <td className={`px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>{match.time}</td>
                   <td className={`px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>Pista {match.field}</td>
-                  <td className={`hidden md:table-cell px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>{match.phase}</td>
                   <td className={`px-1 sm:px-4 py-0.5 sm:py-3 leading-tight truncate ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>
                     {match.description && <span className="text-xs text-gray-500 block leading-none">{match.description}</span>}
                     <span className={`text-2xs sm:text-xs md:text-base ${!groupsCompleted && (match.description || match.previousMatchIds) ? 'text-yellow-600' : ''}`}>
                       {getMatchTeams(match)}
                     </span>
-                    <span className="md:hidden text-2xs text-gray-500 leading-none block">{match.phase}</span>
+                    <span className="text-2xs text-gray-500 leading-none block">{match.phase}</span>
                   </td>
                   <td className="px-1 sm:px-4 py-0.5 sm:py-3 text-center whitespace-nowrap text-xs sm:text-base leading-tight">{getMatchStatus(match)}</td>
                 </tr>
