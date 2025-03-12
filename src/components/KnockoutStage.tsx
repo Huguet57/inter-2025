@@ -1,6 +1,7 @@
 import React from 'react';
 import { useMatches } from '../context/MatchContext';
 import { calculateTeamStats } from './GroupStage';
+import { Match } from '../data/tournament';
 
 interface QualifiedTeam {
   name: string;
@@ -31,7 +32,9 @@ const getQualifiedTeams = (matches: any[]) => {
   return qualifiedTeams;
 };
 
-const getTeamsForMatch = (description: string, qualifiedTeams: QualifiedTeam[]) => {
+const getTeamsForMatch = (description: string | undefined, qualifiedTeams: QualifiedTeam[]) => {
+  if (!description) return '';
+  
   const parts = description.split('-').map(part => part.trim());
   if (parts.length !== 2) return description;
 
