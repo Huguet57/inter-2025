@@ -1,9 +1,11 @@
 import React from 'react';
 import Play from 'lucide-react/dist/esm/icons/play';
-import { groupMatches } from '../data/tournament';
+import { useMatches } from '../context/MatchContext';
 
 export const MatchSchedule: React.FC = () => {
-  const getMatchStatus = (match: typeof groupMatches[0]) => {
+  const { matches } = useMatches();
+
+  const getMatchStatus = (match: typeof matches[0]) => {
     if (match.isPlaying) {
       return (
         <div className="flex items-center justify-center text-yellow-500">
@@ -36,7 +38,7 @@ export const MatchSchedule: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {groupMatches.map((match, index) => (
+          {matches.map((match, index) => (
             <tr key={index} className="border-t">
               <td className="px-4 py-2">{match.time}</td>
               <td className="px-4 py-2">Pista {match.field}</td>
