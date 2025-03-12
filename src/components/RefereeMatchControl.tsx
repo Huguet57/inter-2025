@@ -23,9 +23,18 @@ interface MatchControlProps {
       final: Match
     }
   };
+  groupsCompleted?: boolean;
+  isKnockoutStage?: boolean;
 }
 
-const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, teamMap = {}, allMatches }) => {
+const MatchControl: React.FC<MatchControlProps> = ({ 
+  match, 
+  onUpdate, 
+  teamMap = {}, 
+  allMatches,
+  groupsCompleted = true,
+  isKnockoutStage = false
+}) => {
   const getMatchState = (match: Match) => {
     if (match.isPlaying) return 'playing';
     if (match.score1 !== undefined || match.score2 !== undefined) return 'finished';
@@ -91,7 +100,7 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, teamMap = 
       
       <div className="text-center space-y-1">
         {match.description && <div className="text-sm text-gray-600">{match.description}</div>}
-        <div className="font-bold">
+        <div className={`font-bold ${isKnockoutStage && !groupsCompleted ? 'text-yellow-600' : ''}`}>
           {matchTeams}
         </div>
       </div>
@@ -213,9 +222,14 @@ export const RefereeMatchControl: React.FC = () => {
     knockoutMatches
   };
 
+  // Comprovar si tots els partits de grups s'han completat
+  const groupsCompleted = matches.every(m => 
+    m.score1 !== undefined && m.score2 !== undefined && !m.isPlaying
+  );
+
   return (
     <div className="space-y-8 max-w-xl mx-auto">
-      {!matches.every(m => m.score1 !== undefined && m.score2 !== undefined && !m.isPlaying) && (
+      {!groupsCompleted && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-yellow-700">
             Els equips mostrats a les eliminatòries són una estimació basada en la classificació actual dels grups
@@ -233,6 +247,8 @@ export const RefereeMatchControl: React.FC = () => {
               onUpdate={(updates) => updateMatch(index, updates)}
               teamMap={teamMap}
               allMatches={allMatches}
+              groupsCompleted={groupsCompleted}
+              isKnockoutStage={false}
             />
           ))}
         </div>
@@ -248,6 +264,8 @@ export const RefereeMatchControl: React.FC = () => {
               onUpdate={(updates) => updateKnockoutMatch('roundOf16', index, updates)}
               teamMap={teamMap}
               allMatches={allMatches}
+              groupsCompleted={groupsCompleted}
+              isKnockoutStage={true}
             />
           ))}
         </div>
@@ -263,6 +281,8 @@ export const RefereeMatchControl: React.FC = () => {
               onUpdate={(updates) => updateKnockoutMatch('quarterFinals', index, updates)}
               teamMap={teamMap}
               allMatches={allMatches}
+              groupsCompleted={groupsCompleted}
+              isKnockoutStage={true}
             />
           ))}
         </div>
@@ -278,6 +298,8 @@ export const RefereeMatchControl: React.FC = () => {
               onUpdate={(updates) => updateKnockoutMatch('semiFinals', index, updates)}
               teamMap={teamMap}
               allMatches={allMatches}
+              groupsCompleted={groupsCompleted}
+              isKnockoutStage={true}
             />
           ))}
         </div>
@@ -291,6 +313,8 @@ export const RefereeMatchControl: React.FC = () => {
             onUpdate={(updates) => updateKnockoutMatch('thirdPlace', 0, updates)}
             teamMap={teamMap}
             allMatches={allMatches}
+            groupsCompleted={groupsCompleted}
+            isKnockoutStage={true}
           />
         </div>
       </div>
@@ -303,6 +327,8 @@ export const RefereeMatchControl: React.FC = () => {
             onUpdate={(updates) => updateKnockoutMatch('final', 0, updates)}
             teamMap={teamMap}
             allMatches={allMatches}
+            groupsCompleted={groupsCompleted}
+            isKnockoutStage={true}
           />
         </div>
       </div>
