@@ -14,8 +14,8 @@ interface QualifiedTeam {
   position: number;
 }
 
-const getQualifiedTeams = () => {
-  const calculatedGroups = calculateTeamStats();
+const getQualifiedTeams = (matches: Match[]) => {
+  const calculatedGroups = calculateTeamStats(matches);
   const qualifiedTeams: QualifiedTeam[] = [];
 
   calculatedGroups.forEach((group, groupIndex) => {
@@ -198,7 +198,7 @@ const MatchControl: React.FC<MatchControlProps> = ({ match, onUpdate, qualifiedT
 
 export const RefereeMatchControl: React.FC = () => {
   const { matches, updateMatch, knockoutMatches, updateKnockoutMatch } = useMatches();
-  const qualifiedTeams = getQualifiedTeams();
+  const qualifiedTeams = getQualifiedTeams(matches);
 
   return (
     <div className="space-y-8">

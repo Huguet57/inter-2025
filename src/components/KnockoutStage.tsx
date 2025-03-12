@@ -1,5 +1,5 @@
 import React from 'react';
-import { knockoutMatches, groupMatches } from '../data/tournament';
+import { useMatches } from '../context/MatchContext';
 import { calculateTeamStats } from './GroupStage';
 
 interface QualifiedTeam {
@@ -8,14 +8,14 @@ interface QualifiedTeam {
   position: number;
 }
 
-const areGroupMatchesComplete = () => {
-  return groupMatches.every(match => 
+const areGroupMatchesComplete = (matches: any[]) => {
+  return matches.every(match => 
     match.score1 !== undefined && match.score2 !== undefined && !match.isPlaying
   );
 };
 
-const getQualifiedTeams = () => {
-  const calculatedGroups = calculateTeamStats();
+const getQualifiedTeams = (matches: any[]) => {
+  const calculatedGroups = calculateTeamStats(matches);
   const qualifiedTeams: QualifiedTeam[] = [];
 
   calculatedGroups.forEach((group, groupIndex) => {
@@ -50,8 +50,9 @@ const getTeamsForMatch = (description: string, qualifiedTeams: QualifiedTeam[]) 
 };
 
 export const KnockoutStage: React.FC = () => {
-  const qualifiedTeams = getQualifiedTeams();
-  const groupsCompleted = areGroupMatchesComplete();
+  const { matches, knockoutMatches } = useMatches();
+  const qualifiedTeams = getQualifiedTeams(matches);
+  const groupsCompleted = areGroupMatchesComplete(matches);
   
   return (
     <div className="space-y-8">

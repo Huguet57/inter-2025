@@ -1,12 +1,14 @@
 import React from 'react';
-import { groups, groupMatches, Team } from '../data/tournament';
+import { groups, Team } from '../data/tournament';
+import { useMatches } from '../context/MatchContext';
+import { Match } from '../data/tournament';
 
-export const calculateTeamStats = () => {
+export const calculateTeamStats = (matches: Match[]) => {
   // Create a deep copy of groups to avoid mutating the original data
   const updatedGroups = groups.map(group => group.map(team => ({ ...team })));
   
   // Process each match to update team stats
-  groupMatches.forEach(match => {
+  matches.forEach(match => {
     if (match.score1 !== undefined && match.score2 !== undefined) {
       // Find teams in our groups
       let team1: Team | undefined;
@@ -62,7 +64,8 @@ export const calculateTeamStats = () => {
 };
 
 export const GroupStage: React.FC = () => {
-  const calculatedGroups = calculateTeamStats();
+  const { matches } = useMatches();
+  const calculatedGroups = calculateTeamStats(matches);
   
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
