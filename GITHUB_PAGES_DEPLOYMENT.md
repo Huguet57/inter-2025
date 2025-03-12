@@ -1,10 +1,10 @@
 # Deploying the Tournament App to GitHub Pages
 
-This guide will walk you through the process of deploying your Tournament application to GitHub Pages at https://huguet57.github.io/inter-2025/.
+This guide will walk you through the process of deploying your Tournament application to GitHub Pages at https://tenimaleta.github.io/inter-2025/.
 
 ## Prerequisites
 
-- A GitHub account with access to the repository at https://github.com/Huguet57/inter-2025
+- A GitHub account with access to the repository at https://github.com/tenimaleta/inter-2025
 - Git installed on your local machine
 - Node.js and npm installed on your local machine
 
@@ -17,7 +17,7 @@ If the repository doesn't exist yet, create it on GitHub and push your code:
 git init
 
 # Add the remote repository
-git remote add origin https://github.com/Huguet57/inter-2025.git
+git remote add origin https://github.com/tenimaleta/inter-2025.git
 
 # Add all files
 git add .
@@ -31,7 +31,7 @@ git push -u origin main  # Use your main branch name if different
 
 ## Step 2: Configure GitHub Repository Settings
 
-1. Go to your repository on GitHub: https://github.com/Huguet57/inter-2025
+1. Go to your repository on GitHub: https://github.com/tenimaleta/inter-2025
 2. Navigate to Settings > Pages
 3. Under "Source", select "GitHub Actions" (this will be used by our workflow)
 4. Save your settings
@@ -66,7 +66,7 @@ This will build your application and push it to the `gh-pages` branch of your re
 
 After the deployment (either via GitHub Actions or manual), wait a few minutes and then visit:
 
-https://huguet57.github.io/inter-2025/
+https://tenimaleta.github.io/inter-2025/
 
 Your tournament application should now be live on GitHub Pages!
 
