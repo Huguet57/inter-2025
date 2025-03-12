@@ -65,8 +65,8 @@ export const MatchSchedule: React.FC = () => {
   const firstKnockoutIndex = allMatchesArray.findIndex(match => match.phase !== 'Fase de Grups');
 
   return (
-    <div className="overflow-x-auto -mx-4 sm:-mx-2 md:mx-0">
-      <table className="w-full bg-white rounded-lg shadow-md table-fixed">
+    <div className="overflow-x-auto sm:-mx-2 md:mx-0 flex justify-center">
+      <table className="w-[95%] bg-white rounded-lg shadow-md table-fixed">
         <thead>
           <tr className="bg-gray-100 border-b border-gray-200">
             <th className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-left w-[25%] sm:w-auto">Hora</th>
