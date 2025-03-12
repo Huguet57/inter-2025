@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Trophy from 'lucide-react/dist/esm/icons/trophy';
 import Users from 'lucide-react/dist/esm/icons/users';
 import Calendar from 'lucide-react/dist/esm/icons/calendar';
@@ -21,9 +21,22 @@ const LoadingIndicator = () => (
 
 // Content component that shows loading state if needed
 const AppContent = () => {
-  const [activeTab, setActiveTab] = useState<'groups' | 'schedule' | 'knockout' | 'referee'>('groups');
+  const [activeTab, setActiveTab] = useState<'groups' | 'schedule' | 'knockout' | 'referee'>(() => {
+    // Get the saved tab from localStorage, defaulting to 'groups' if not found or invalid
+    const savedTab = localStorage.getItem('activeTab');
+    if (savedTab === 'groups' || savedTab === 'schedule' || savedTab === 'knockout' || savedTab === 'referee') {
+      return savedTab;
+    }
+    return 'groups';
+  });
+  
   const { loading } = useMatches();
 
+  // Save activeTab to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+  
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-blue-600 text-white py-6">
