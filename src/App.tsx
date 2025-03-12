@@ -54,8 +54,8 @@ const AppContent = () => {
       )}
 
       <nav className="bg-white shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center space-x-4">
+        <div className="container mx-auto px-4 overflow-x-auto">
+          <div className="flex space-x-6 whitespace-nowrap">
             <button
               onClick={() => setActiveTab('groups')}
               className={`flex items-center px-4 py-3 font-medium ${
@@ -104,7 +104,7 @@ const AppContent = () => {
         </div>
       </nav>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-8">
         {loading ? (
           <LoadingIndicator />
         ) : (
