@@ -64,6 +64,19 @@ export const MatchSchedule: React.FC = () => {
   // Find the index of the first knockout match
   const firstKnockoutIndex = allMatchesArray.findIndex(match => match.phase !== 'Fase de Grups');
 
+  const isCurrentMatch = (matchTime: string) => {
+    const now = new Date();
+    const [startTime, endTime] = matchTime.split('-');
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+    
+    const _now = new Date();
+    const matchStart = new Date(_now.setHours(startHour, startMinute, 0));
+    const matchEnd = new Date(_now.setHours(endHour, endMinute, 0));
+    
+    return now >= matchStart && now <= matchEnd;
+  };
+
   return (
     <div className="overflow-x-auto sm:-mx-2 md:mx-0 flex justify-center">
       <table className="w-[95%] bg-white rounded-lg shadow-md table-fixed">
@@ -102,10 +115,10 @@ export const MatchSchedule: React.FC = () => {
                   </tr>
                 )}
                 <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight">{match.time}</td>
-                  <td className="px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight">Pista {match.field}</td>
-                  <td className="hidden md:table-cell px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight">{match.phase}</td>
-                  <td className="px-1 sm:px-4 py-0.5 sm:py-3 leading-tight truncate">
+                  <td className={`px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>{match.time}</td>
+                  <td className={`px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>Pista {match.field}</td>
+                  <td className={`hidden md:table-cell px-1 sm:px-4 py-0.5 sm:py-3 whitespace-nowrap text-xs sm:text-base leading-tight ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>{match.phase}</td>
+                  <td className={`px-1 sm:px-4 py-0.5 sm:py-3 leading-tight truncate ${isCurrentMatch(match.time) ? 'font-bold' : ''}`}>
                     {match.description && <span className="text-xs text-gray-500 block leading-none">{match.description}</span>}
                     <span className={`text-2xs sm:text-xs md:text-base ${!groupsCompleted && (match.description || match.previousMatchIds) ? 'text-yellow-600' : ''}`}>
                       {getMatchTeams(match)}
