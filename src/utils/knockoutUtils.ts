@@ -184,6 +184,65 @@ export const getQualifiedTeamMap = (qualifiedTeams: QualifiedTeam[]): Record<str
     });
   });
   
+  // Find and rank all third-placed teams
+  const thirdPlacedTeams = qualifiedTeams.filter(team => team.position === 3);
+  
+  // Sort third-placed teams by points, goal difference, goals for
+  const rankedThirdPlacedTeams = [...thirdPlacedTeams].sort((a, b) => {
+    // First sort by points
+    if (b.points !== a.points) return b.points - a.points;
+    
+    // Then by goal difference
+    const goalDiffA = a.goalsFor - a.goalsAgainst;
+    const goalDiffB = b.goalsFor - b.goalsAgainst;
+    if (goalDiffB !== goalDiffA) return goalDiffB - goalDiffA;
+    
+    // Then by goals scored
+    return b.goalsFor - a.goalsFor;
+  });
+  
+  // Add entries for best third-placed teams
+  const positionNames = {
+    1: ['1r', '1er', 'Primer'],
+    2: ['2n', '2on', 'Segon'],
+    3: ['3r', '3er', 'Tercer'],
+    4: ['4t', '4rt', 'Quart'],
+    5: ['5è', '5e', 'Cinquè'],
+    6: ['6è', '6e', 'Sisè']
+  };
+  
+  // Add all variations of "Millor 3r" patterns
+  rankedThirdPlacedTeams.forEach((team, index) => {
+    const position = index + 1;
+    const variations = positionNames[position as 1|2|3|4|5|6] || [];
+    
+    // Standard format
+    teamMap[`${position}r Millor 3r`] = team.name;
+    
+    // All position variations
+    variations.forEach(posVar => {
+      teamMap[`${posVar} Millor 3r`] = team.name;
+      
+      // With dash suffix
+      teamMap[`${posVar} Millor 3r-`] = team.name;
+      teamMap[`${posVar} Millor 3r -`] = team.name;
+    });
+  });
+  
+  // Debug logging for third-placed teams
+  console.log('Ranked third-placed teams:');
+  rankedThirdPlacedTeams.forEach((team, index) => {
+    console.log(`${index + 1}. ${team.name} (Group ${team.group}): ${team.points}pts, GD: ${team.goalsFor - team.goalsAgainst}, GF: ${team.goalsFor}`);
+  });
+  
+  // Log "Millor 3r" entries in team map
+  console.log('Millor 3r entries in team map:');
+  Object.entries(teamMap)
+    .filter(([key]) => key.includes('Millor 3r'))
+    .forEach(([key, value]) => {
+      console.log(`${key} -> ${value}`);
+    });
+  
   return teamMap;
 };
 
@@ -192,6 +251,17 @@ const parseTeamDescription = (description: string, teamMap: Record<string, strin
   // Try direct lookup first
   if (teamMap[description]) {
     return teamMap[description];
+  }
+  
+  // Try to match the "Millor 3r" pattern
+  const bestThirdPattern = /(\d+)(?:r|er|on|rt|t|è)\s+Millor\s+3r/i;
+  const bestThirdMatch = description.match(bestThirdPattern);
+  
+  if (bestThirdMatch) {
+    const position = parseInt(bestThirdMatch[1]);
+    // Try standard format
+    const key = `${position}r Millor 3r`;
+    return teamMap[key] || description;
   }
   
   // Try to extract position and group using regex patterns
