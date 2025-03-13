@@ -104,14 +104,14 @@ export const groupMatches: Match[] = [
 
 export const knockoutMatches = {
   roundOf16: [
-    { id: "R16-1", time: "16:40-17:00", field: 1, description: "1r Grup 1 - 4t Grup 2" },
-    { id: "R16-2", time: "16:40-17:00", field: 2, description: "2n Grup 3 - 3r Grup 4" },
-    { id: "R16-3", time: "17:00-17:20", field: 1, description: "1r Grup 3 - 4t Grup 4" },
-    { id: "R16-4", time: "17:00-17:20", field: 2, description: "2n Grup 1 - 3r Grup 2" },
-    { id: "R16-5", time: "17:20-17:40", field: 1, description: "3r Grup 1 - 2n Grup 2" },
-    { id: "R16-6", time: "17:20-17:40", field: 2, description: "4t Grup 3 - 1r Grup 4" },
-    { id: "R16-7", time: "17:40-18:00", field: 1, description: "3r Grup 3 - 2n Grup 4" },
-    { id: "R16-8", time: "17:40-18:00", field: 2, description: "4t Grup 1 - 1r Grup 2" },
+    { id: "R16-1", time: "16:40-17:00", field: 1, description: "1r Grup 1 - 1r Millor 3r" },
+    { id: "R16-2", time: "16:40-17:00", field: 2, description: "1r Grup 2 - 2n Millor 3r" },
+    { id: "R16-3", time: "17:00-17:20", field: 1, description: "1r Grup 3 - 3r Millor 3r" },
+    { id: "R16-4", time: "17:00-17:20", field: 2, description: "1r Grup 4 - 4t Millor 3r" },
+    { id: "R16-5", time: "17:20-17:40", field: 1, description: "1r Grup 5 - 2n Grup 1" },
+    { id: "R16-6", time: "17:20-17:40", field: 2, description: "1r Grup 6 - 2n Grup 2" },
+    { id: "R16-7", time: "17:40-18:00", field: 1, description: "2n Grup 3 - 2n Grup 4" },
+    { id: "R16-8", time: "17:40-18:00", field: 2, description: "2n Grup 5 - 2n Grup 6" },
   ],
   quarterFinals: [
     { id: "QF-1", time: "18:00-18:20", field: 1, description: "Guanyadors encreuaments anteriors", previousMatchIds: ["R16-1", "R16-2"] },
