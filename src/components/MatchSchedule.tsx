@@ -137,7 +137,7 @@ export const MatchSchedule: React.FC = () => {
               <div className="flex items-center mb-4">
                 <button 
                   onClick={clearFilters}
-                  className="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full hover:bg-blue-100"
+                  className="w-full text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-l hover:bg-blue-100"
                 >
                   Netejar tot
                 </button>
