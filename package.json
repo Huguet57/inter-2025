@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Tournament management application",
   "type": "module",
-  "homepage": "https://tenimaleta.github.io/inter-2025",
+  "homepage": "https://inter2025.tenimaleta.com",
   "scripts": {
     "dev:client": "vite",
     "dev:server": "cd server && npm run dev",

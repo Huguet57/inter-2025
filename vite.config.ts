@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/inter-2025/', // Base path for GitHub Pages (tenimaleta.github.io/inter-2025/)
+  base: '/', // Base path for GitHub Pages (https://inter2025.tenimaleta.com)
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],

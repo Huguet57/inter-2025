@@ -34,5 +34,5 @@ If the deployment fails:
 
 ## Notes
 
-- The app is configured to be deployed at: https://tenimaleta.github.io/inter-2025/
+- The app is configured to be deployed at: https://inter2025.tenimaleta.com
 - Make sure to update `package.json` and `vite.config.ts` if the repository name changes 

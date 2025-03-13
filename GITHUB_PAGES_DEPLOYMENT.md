@@ -1,6 +1,6 @@
 # Deploying the Tournament App to GitHub Pages
 
-This guide will walk you through the process of deploying your Tournament application to GitHub Pages at https://tenimaleta.github.io/inter-2025/.
+This guide will walk you through the process of deploying your Tournament application to GitHub Pages at https://inter2025.tenimaleta.com.
 
 ## Prerequisites
 
@@ -66,7 +66,7 @@ This will build your application and push it to the `gh-pages` branch of your re
 
 After the deployment (either via GitHub Actions or manual), wait a few minutes and then visit:
 
-https://tenimaleta.github.io/inter-2025/
+https://inter2025.tenimaleta.com
 
 Your tournament application should now be live on GitHub Pages!
 
@@ -75,7 +75,7 @@ Your tournament application should now be live on GitHub Pages!
 ### If the site doesn't load correctly:
 
 1. Check if there are any console errors in your browser (F12 > Console)
-2. Verify that the base URL in `vite.config.ts` is set to `/inter-2025/`
+2. Verify that the base URL in `vite.config.ts` is set to `/`
 3. Check GitHub Actions logs for any deployment errors
 
 ### API Connection Issues:
