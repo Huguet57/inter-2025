@@ -24,7 +24,7 @@ export const GroupStage: React.FC = () => {
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       {groupedTeams.map((groupTeams, index) => (
         <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="bg-blue-600 text-white px-4 py-2">
+          <div className="bg-pink-300 text-white px-4 py-2">
             <h3 className="text-lg font-bold">GRUP {index + 1}</h3>
           </div>
           <div className="overflow-x-auto">
