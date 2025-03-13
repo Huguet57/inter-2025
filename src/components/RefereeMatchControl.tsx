@@ -263,7 +263,7 @@ export const RefereeMatchControl: React.FC = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-8">
-        <Loader className="w-8 h-8 animate-spin text-pink-300 mb-4" />
+        <Loader className="w-8 h-8 animate-spin text-blue-600 mb-4" />
         <p className="text-gray-600">Carregant dades del torneig...</p>
       </div>
     );
@@ -273,7 +273,7 @@ export const RefereeMatchControl: React.FC = () => {
     return (
       <div className="max-w-md mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
         <div className="flex items-center justify-center mb-6">
-          <Lock className="w-8 h-8 text-pink-300 mr-2" />
+          <Lock className="w-8 h-8 text-blue-600 mr-2" />
           <h2 className="text-2xl font-bold text-gray-800">Àrea d'Àrbitres</h2>
         </div>
         
@@ -291,7 +291,7 @@ export const RefereeMatchControl: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-200"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Introdueix la contrasenya"
               autoComplete="off"
             />
@@ -300,7 +300,7 @@ export const RefereeMatchControl: React.FC = () => {
           
           <button
             type="submit"
-            className="w-full bg-pink-300 text-white py-2 px-4 rounded-md hover:bg-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:ring-offset-2 transition-colors"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
           >
             Accedir
           </button>

@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import Play from 'lucide-react/dist/esm/icons/play';
+import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down';
+import ChevronUp from 'lucide-react/dist/esm/icons/chevron-up';
+import X from 'lucide-react/dist/esm/icons/x';
 import { useMatches } from '../context/MatchContext';
 import { groups } from '../data/tournament';
 import { calculateGroupStandings, getQualifiedTeamMap, resolveKnockoutMatchTeams } from '../utils/knockoutUtils';
@@ -8,6 +11,8 @@ export const MatchSchedule: React.FC = () => {
   const { matches, knockoutMatches } = useMatches();
   const qualifiedTeams = calculateGroupStandings(groups, matches);
   const teamMap = getQualifiedTeamMap(qualifiedTeams);
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const groupsCompleted = matches.every(match => 
     match.score1 !== undefined && match.score2 !== undefined && !match.isPlaying
   );
@@ -15,6 +20,28 @@ export const MatchSchedule: React.FC = () => {
   const allMatches = {
     groupMatches: matches,
     knockoutMatches
+  };
+
+  // Get all unique teams from matches
+  const allTeams = useMemo(() => {
+    const teams = new Set<string>();
+    matches.forEach(match => {
+      if (match.team1) teams.add(match.team1);
+      if (match.team2) teams.add(match.team2);
+    });
+    return Array.from(teams).sort();
+  }, [matches]);
+
+  const handleTeamToggle = (team: string) => {
+    setSelectedTeams(prev => 
+      prev.includes(team)
+        ? prev.filter(t => t !== team)
+        : [...prev, team]
+    );
+  };
+
+  const clearFilters = () => {
+    setSelectedTeams([]);
   };
 
   const getMatchStatus = (match: any) => {
@@ -54,7 +81,13 @@ export const MatchSchedule: React.FC = () => {
     ...knockoutMatches.semiFinals.map(match => ({ ...match, phase: 'Semifinals' })),
     [{ ...knockoutMatches.thirdPlace, phase: '3r i 4t Lloc' }],
     [{ ...knockoutMatches.final, phase: 'Final' }]
-  ].flat().sort((a, b) => {
+  ].flat()
+  .filter(match => {
+    if (selectedTeams.length === 0) return true;
+    const matchTeamsStr = getMatchTeams(match);
+    return selectedTeams.some(team => matchTeamsStr.includes(team));
+  })
+  .sort((a, b) => {
     // Sort by time (assuming format is consistent)
     const timeA = a.time.split('-')[0]; // Take start time
     const timeB = b.time.split('-')[0];
@@ -78,7 +111,74 @@ export const MatchSchedule: React.FC = () => {
   };
 
   return (
-    <div className="overflow-x-auto sm:-mx-2 md:mx-0 flex justify-center">
+    <div className="overflow-x-auto sm:-mx-2 md:mx-0 flex flex-col items-center">
+      <div className="w-[95%] mb-4">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <button 
+            onClick={() => setIsFilterOpen(prev => !prev)}
+            className="w-full flex items-center justify-between px-4 py-3 border-b border-gray-100 text-gray-800"
+          >
+            <div className="flex items-center">
+              <span className="font-medium">Filtre d'equips</span>
+              {selectedTeams.length > 0 && (
+                <span className="bg-blue-500 text-white text-xs rounded-full ml-2 px-2 py-0.5">
+                  {selectedTeams.length}
+                </span>
+              )}
+            </div>
+            {isFilterOpen 
+              ? <ChevronUp className="w-4 h-4 text-gray-500" /> 
+              : <ChevronDown className="w-4 h-4 text-gray-500" />
+            }
+          </button>
+          
+          {isFilterOpen && (
+            <div className="p-4">
+              <div className="flex items-center mb-4">
+                <button 
+                  onClick={clearFilters}
+                  className="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full hover:bg-blue-100"
+                >
+                  Netejar tot
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                {allTeams.map(team => {
+                  const isSelected = selectedTeams.includes(team);
+                  return (
+                    <div 
+                      key={team} 
+                      className={`flex items-center p-1 rounded ${isSelected ? 'bg-blue-100' : ''}`}
+                    >
+                      <input
+                        type="checkbox"
+                        id={`team-${team}`}
+                        checked={isSelected}
+                        onChange={() => handleTeamToggle(team)}
+                        className="mr-2 h-4 w-4 text-blue-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor={`team-${team}`} className="text-sm cursor-pointer truncate">
+                        {team}
+                      </label>
+                      {isSelected && (
+                        <button 
+                          onClick={() => handleTeamToggle(team)}
+                          className="ml-auto text-blue-600"
+                          aria-label={`Remove ${team}`}
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      
       <table className="w-[95%] bg-white rounded-lg shadow-md table-fixed">
         <thead>
           <tr className="bg-gray-100 border-b border-gray-200">
