@@ -16,6 +16,107 @@ const DATA_PATH = path.join(__dirname, 'data');
 const MATCHES_FILE = path.join(DATA_PATH, 'matches.json');
 const KNOCKOUT_FILE = path.join(DATA_PATH, 'knockout.json');
 
+// File locking mechanism
+const fileLocks = new Map();
+
+// Acquire a lock on a file
+const acquireLock = async (filePath, timeoutMs = 10000) => {
+  // If no lock exists yet, create one that resolves immediately
+  if (!fileLocks.has(filePath)) {
+    fileLocks.set(filePath, Promise.resolve());
+  }
+
+  // Get the current lock
+  const currentLock = fileLocks.get(filePath);
+  
+  // Create a new lock that will replace the current one
+  let releaseLock;
+  const newLock = new Promise(resolve => {
+    releaseLock = resolve;
+  });
+  
+  // Set up timeout for lock acquisition
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => reject(new Error(`Timeout acquiring lock for ${filePath}`)), timeoutMs);
+  });
+  
+  // Wait for the current lock to be released
+  try {
+    await Promise.race([currentLock, timeoutPromise]);
+    // Set the new lock
+    fileLocks.set(filePath, newLock);
+    return releaseLock;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Safe JSON file writing utility
+const safeWriteJSON = async (filePath, data) => {
+  // Validate data can be stringified
+  try {
+    JSON.stringify(data);
+  } catch (error) {
+    throw new Error(`Invalid JSON data: ${error.message}`);
+  }
+
+  // Acquire lock for this file
+  let releaseLock;
+  try {
+    releaseLock = await acquireLock(filePath);
+    console.log(`Lock acquired for ${filePath}`);
+  } catch (error) {
+    throw new Error(`Failed to acquire file lock: ${error.message}`);
+  }
+
+  const backupPath = `${filePath}.backup`;
+  
+  try {
+    // Create backup of existing file if it exists
+    try {
+      await fs.access(filePath);
+      await fs.copyFile(filePath, backupPath);
+    } catch (err) {
+      // File doesn't exist yet, no backup needed
+    }
+    
+    // Write to a temporary file first
+    const tempPath = `${filePath}.tmp`;
+    await fs.writeFile(tempPath, JSON.stringify(data, null, 2));
+    
+    // Rename the temp file to the target file (more atomic operation)
+    await fs.rename(tempPath, filePath);
+    
+    // Remove backup if everything succeeded
+    try {
+      await fs.access(backupPath);
+      await fs.unlink(backupPath);
+    } catch (err) {
+      // No backup to delete
+    }
+  } catch (error) {
+    // If anything failed, try to restore from backup
+    try {
+      const backupExists = await fs.access(backupPath).then(() => true).catch(() => false);
+      if (backupExists) {
+        await fs.copyFile(backupPath, filePath);
+      }
+    } catch (restoreError) {
+      // Release lock before throwing
+      releaseLock();
+      throw new Error(`Failed to write JSON and restore backup: ${error.message}, ${restoreError.message}`);
+    }
+    
+    // Release lock before throwing
+    releaseLock();
+    throw new Error(`Failed to safely write JSON: ${error.message}`);
+  }
+  
+  // Release the lock
+  releaseLock();
+  console.log(`Lock released for ${filePath}`);
+};
+
 // Initialize data files if they don't exist
 const initializeData = async () => {
   try {
@@ -86,12 +187,12 @@ app.put('/api/matches/:index', async (req, res) => {
     if (matches[index].score1 === null) matches[index].score1 = undefined;
     if (matches[index].score2 === null) matches[index].score2 = undefined;
     
-    await fs.writeFile(MATCHES_FILE, JSON.stringify(matches, null, 2));
+    await safeWriteJSON(MATCHES_FILE, matches);
     
     res.json(matches[index]);
   } catch (error) {
     console.error('Error updating match:', error);
-    res.status(500).json({ error: 'Failed to update match' });
+    res.status(500).json({ error: 'Failed to update match: ' + error.message });
   }
 });
 
@@ -143,12 +244,12 @@ app.put('/api/knockout/:round/:index', async (req, res) => {
       if (knockoutMatches[round][idx].score2 === null) knockoutMatches[round][idx].score2 = undefined;
     }
     
-    await fs.writeFile(KNOCKOUT_FILE, JSON.stringify(knockoutMatches, null, 2));
+    await safeWriteJSON(KNOCKOUT_FILE, knockoutMatches);
     
     res.json(knockoutMatches);
   } catch (error) {
     console.error('Error updating knockout match:', error);
-    res.status(500).json({ error: 'Failed to update knockout match' });
+    res.status(500).json({ error: 'Failed to update knockout match: ' + error.message });
   }
 });
 
