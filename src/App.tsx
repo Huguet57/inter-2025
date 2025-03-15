@@ -4,10 +4,12 @@ import Users from 'lucide-react/dist/esm/icons/users';
 import Calendar from 'lucide-react/dist/esm/icons/calendar';
 import Flag from 'lucide-react/dist/esm/icons/flag';
 import Loader from 'lucide-react/dist/esm/icons/loader';
+// import ChartBar from 'lucide-react/dist/esm/icons/chart-bar';
 import { GroupStage } from './components/GroupStage';
 import { MatchSchedule } from './components/MatchSchedule';
 import { KnockoutStage } from './components/KnockoutStage';
 import { RefereeMatchControl } from './components/RefereeMatchControl';
+import { Statistics } from './components/Statistics';
 import { MatchProvider, useMatches } from './context/MatchContext';
 import { AuthProvider } from './context/AuthContext';
 
@@ -21,10 +23,10 @@ const LoadingIndicator = () => (
 
 // Content component that shows loading state if needed
 const AppContent = () => {
-  const [activeTab, setActiveTab] = useState<'groups' | 'schedule' | 'knockout' | 'referee'>(() => {
+  const [activeTab, setActiveTab] = useState<'groups' | 'schedule' | 'knockout' | 'referee' | 'statistics'>(() => {
     // Get the saved tab from localStorage, defaulting to 'groups' if not found or invalid
     const savedTab = localStorage.getItem('activeTab');
-    if (savedTab === 'groups' || savedTab === 'schedule' || savedTab === 'knockout' || savedTab === 'referee') {
+    if (savedTab === 'groups' || savedTab === 'schedule' || savedTab === 'knockout' || savedTab === 'referee' || savedTab === 'statistics') {
       return savedTab;
     }
     return 'groups';
@@ -82,6 +84,17 @@ const AppContent = () => {
               Eliminatòries
             </button>
             <button
+              onClick={() => setActiveTab('statistics')}
+              className={`flex items-center px-4 py-3 font-medium ${
+                activeTab === 'statistics'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-blue-600'
+              }`}
+            >
+              {/* <ChartBar className="w-5 h-5 mr-2" /> */}
+              Estadístiques
+            </button>
+            <button
               onClick={() => setActiveTab('referee')}
               className={`flex items-center px-4 py-3 font-medium ${
                 activeTab === 'referee'
@@ -104,6 +117,7 @@ const AppContent = () => {
             {activeTab === 'groups' && <GroupStage />}
             {activeTab === 'schedule' && <MatchSchedule />}
             {activeTab === 'knockout' && <KnockoutStage />}
+            {activeTab === 'statistics' && <Statistics />}
             {activeTab === 'referee' && <RefereeMatchControl />}
           </>
         )}
