@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-// import { BarChart } from 'lucide-react/dist/esm/icons/bar-chart';
+import BarChart from 'lucide-react/dist/esm/icons/bar-chart';
 import Trophy from 'lucide-react/dist/esm/icons/trophy';
 import { useMatches } from '../context/MatchContext';
 import { groups } from '../data/tournament';
@@ -81,7 +81,7 @@ export const Statistics: React.FC = () => {
   const renderStatCard = (title: string, stats: TeamStat[], valueSuffix: string = '') => (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="bg-blue-600 text-white p-3 flex items-center">
-        {/* <BarChart className="w-5 h-5 mr-2" /> */}
+        <BarChart className="w-5 h-5 mr-2" />
         <h3 className="text-lg font-semibold">{title}</h3>
       </div>
       <div className="p-4">
