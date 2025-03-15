@@ -73,17 +73,6 @@ const AppContent = () => {
               Horari
             </button>
             <button
-              onClick={() => setActiveTab('knockout')}
-              className={`flex items-center px-4 py-3 font-medium ${
-                activeTab === 'knockout'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-blue-600'
-              }`}
-            >
-              <Trophy className="w-5 h-5 mr-2" />
-              Eliminatòries
-            </button>
-            <button
               onClick={() => setActiveTab('statistics')}
               className={`flex items-center px-4 py-3 font-medium ${
                 activeTab === 'statistics'
@@ -93,6 +82,17 @@ const AppContent = () => {
             >
               <BarChart className="w-5 h-5 mr-2" />
               Estadístiques
+            </button>
+            <button
+              onClick={() => setActiveTab('knockout')}
+              className={`flex items-center px-4 py-3 font-medium ${
+                activeTab === 'knockout'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-blue-600'
+              }`}
+            >
+              <Trophy className="w-5 h-5 mr-2" />
+              Eliminatòries
             </button>
             <button
               onClick={() => setActiveTab('referee')}
